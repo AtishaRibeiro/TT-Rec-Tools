@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>MSG Editor</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <script src="../navbar/init_nav.js"></script>
+        <script src="page_functionality.js"></script>
+        <script src="messages.js"></script>
+        <script src="code_gen.js"></script>
+        <style>
+            body {
+                text-align: center;
+            }
+            #watermark {
+                position: fixed;
+                bottom: 5px;
+                right: 10px;
+            }
+            #msg_table {
+                overflow: auto;
+                /*overflow-y: scroll;*/
+                display: block;
+                height: 26em;
+                padding-right: 0;
+            }
+            #msg_table tr {
+                padding: 5px;
+            }
+
+            .autocomplete-items {
+                position: absolute;
+                border: 1px solid #d4d4d4;
+                border-bottom: none;
+                border-top: none;
+                z-index: 99;
+            }
+            .autocomplete-items div {
+                padding: 10px;
+                cursor: pointer;
+                background-color: #fff;
+                border-bottom: 1px solid #d4d4d4;
+            }
+            .autocomplete-items div:hover {
+                background-color: #e9e9e9;
+            }
+            .autocomplete-active {
+                background-color: DodgerBlue !important;
+                color: #ffffff;
+            }
+            #colour_table {
+                margin-bottom: 0;
+                font-size: 75%;
+                font-weight: bold;
+                /*text-shadow: 1px 1px black;*/
+                /*background-color: grey;*/
+            }
+            #colour_table td {
+                padding: 5px;
+            } 
+            .code {
+                font-family: Lucida Console;
+                font-weight: bold;
+            }
+            p {
+                margin-bottom: 10px;
+            }
+            li {
+                width:6em;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="nav-placeholder"></div>
+        <section class="section">
+        <div class="container">
+
+            <div class="columns is-centered">
+                <div class="column">
+                    <div id="tabs" class="tabs is-toggle is-centered" style="margin-bottom:5px;">
+                        <ul>
+                          <li class="is-active">
+                            <a><span>PAL</span></a>
+                          </li>
+                          <li>
+                            <a><span>NTSC-U</span></a>
+                          </li>
+                          <li>
+                            <a><span>NTSC-J</span></a>
+                          </li>
+                          <li>
+                            <a><span>NTSC-K</span></a>
+                          </li>
+                        </ul>
+                    </div>
+                    <div class="select">
+                        <select id="language_select">
+                        </select>
+                      </div>
+                </div>
+            </div>
+
+            <div class="columns is-centered">
+                <div class="column is-4">
+                    <div class="box" style="height:32.5em;">
+                        <div style="position:absolute">
+                            <span id="info-butt" class="icon has-text-info" style="cursor:pointer">
+                                <i class="fas fa-lg fa-info-circle"></i>
+                            </span>
+                        </div>
+                        
+                        <div >
+                        <p><b>MISC</b>
+                        <br><span class="code">\n</span> - new line
+                        <br><span class="code">${PLAYER}</span> - current player name
+                        </p>
+                        <p><b>COLOURS</b>
+                        <br>
+                        <div class="columns is-centered">
+                            <div class="column is-narrow" style="padding-bottom:0;">
+                                <table id="colour_table" class="table is-bordered is-centered">
+                                    <tbody>
+                                        <tr> <td style="color:white;text-shadow: 1px 1px black;">${WHITE}</td> <td style="color:#ff5454;">${RED2}</td> <td style="color: #ffe600">${YELLOW3}</td> <td style="color:#ff5100">${ORANGE4}</td></tr>
+                                        <tr> <td style="color:grey;">${GREY}</td> <td style="color: red">${RED3}</td> <td style="color: #ffc800">${ORANGE1}</td> <td style="color:#66c2ff">${BLUE1}</td></tr>
+                                        <tr> <td>${TRANSP}</td> <td style="color:yellow">${YELLOW1}</td> <td style="color:#ffa600">${ORANGE2}</td> <td style="color:#0069fc">${BLUE2}</td></tr>
+                                        <tr> <td style="color:#ff7575;">${RED1}</td> <td style="color: #fff200">${YELLOW2}</td> <td style="color:#ff7700">${ORANGE3}</td> <td style="color:#1ad937">${GREEN}</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        </p>
+                        <p><b>FONT SIZE</b>
+                        <br><span class="code">F{x}</span> - x denotes the font size in percentage
+                        <br>0 being the smallest value and 255 the largest
+                        </p>
+                        <p><b>UNICODE</b>
+                        <br><span class="code">U{xxxxxxxx}</span> - Unicode character U+xxxxxxxx
+                        <br><span class="code">U{xxxx}</span> - Unicode character U+xxxx
+
+                        </p>
+                        <p><b>HEX</b>
+                        <br><span class="code">H{x}</span> - x is a hexadecimal string and can have any length 
+                        </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-5">
+                    <div class="box" style="height:32.5em;">
+                        <div class="table-container">
+                            <table class="is-fullwidth">
+                                <tbody id="msg_table" style="width: 108%;">
+                                    <tr style="display:block;">
+                                        <td style="padding:0; padding-right:5px;width:20%;">
+                                            <div class="autocomplete" style="padding:0;">
+                                                <input id="id_input_0" class="input has-text-centered" type="text" autocomplete="on" placeholder="MSG ID" maxlength="4">
+                                            </div>
+                                        </td>
+                                        <td style="padding:0;width:80%;padding-right:5px;">
+                                            <div class="autocomplete" style="width:100%;">
+                                                <input id="msg_input_0" class="input" type="text" placeholder="Text">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <button id="add_butt" class="button is-success has-text-weight-bold" style="width:70%;"><i class="fas fa-plus"></i></button>
+                        <button id="remove_butt" class="button is-danger has-text-weight-bold" style="width:29%;"><i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="column is-1" style="width:350px;">
+                    <div class="box" style="height:32.5em;">
+                        <textarea readonly id="result" class="textarea has-fixed-size is-family-code mb-2 has-text-centered" placeholder="Select a message" style="height: 27em;"></textarea>
+                        <button id="start_butt" class="button is-warning has-text-weight-bold" style=width:45%>Start</button>
+                        <button id="copy_butt" class="button is-warning has-text-weight-bold" style=width:45%>Copy</button>
+                    </div>
+                </div>
+                <div class="column is-1">
+            </div>
+
+        </div>
+        
+        <div id="watermark">
+            Made by WhatisLoaf
+        </div>
+        </section>
+    </body>
+</html>

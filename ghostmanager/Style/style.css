@@ -1,0 +1,173 @@
+body {
+    height: 100vh;
+}
+
+#watermark {
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+}
+
+.highlight {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    border-color: black;
+}
+
+.columns {
+    text-align: center;
+}
+
+.license-div {
+    border-radius: 5px;
+}
+
+.rkg-button {
+    margin-top: 0.5rem;
+}
+
+.rkg-button, .rkg-button > * {
+    cursor: pointer;
+}
+
+button, button > * {
+    cursor: pointer;
+}
+
+#import-save-butt {
+    font-weight: bold;
+}
+
+tbody {
+    height: 10em;
+    overflow-y: scroll;
+    display: block;
+    scrollbar-width: thin;
+}
+
+.table-container {
+    margin-bottom: 10px;
+    border-radius: 0px 0px 5px 5px;
+}
+
+.t-header {
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+
+tr {
+    display: block;
+    writing-mode: horizontal-tb;
+}
+
+.table td {
+    border: 0px solid;
+}
+
+#l1 {
+    background-color: hsl(48, 100%, 67%);
+}
+
+#l2 {
+    background-color: hsl(204, 86%, 53%);
+}
+
+#l3 {
+    background-color: hsl(348, 100%, 61%);
+}
+
+#l4 {
+    background-color: hsl(141, 71%, 48%);
+}
+
+/* scrollbar-color is firefox only for the time being*/
+
+#l1_t {
+    background-color: hsl(48, 100%, 67%);
+    scrollbar-color: hsl(48, 100%, 30%) hsl(48, 100%, 50%);
+}
+
+#l2_t {
+    background-color: hsl(204, 86%, 53%);
+    scrollbar-color: hsl(204, 86%, 30%) hsl(204, 86%, 40%);
+}
+
+#l3_t {
+    background-color: hsl(348, 100%, 61%);
+    scrollbar-color: hsl(348, 100%, 34%) hsl(348, 100%, 44%);
+}
+
+#l4_t {
+    background-color: hsl(141, 71%, 48%);
+    scrollbar-color: hsl(141, 71%, 25%) hsl(141, 71%, 35%);
+}
+
+/* webkit versions for chrome and other browsers*/
+
+#l1_t::-webkit-scrollbar {
+    width: 10px;
+    background: hsl(48, 100%, 50%);
+}
+
+#l1_t::-webkit-scrollbar-thumb {
+    background: hsl(48, 100%, 30%);
+}
+
+#l2_t::-webkit-scrollbar {
+    width: 10px;
+    background: hsl(204, 86%, 40%);
+}
+
+#l2_t::-webkit-scrollbar-thumb {
+    background: hsl(204, 86%, 30%);
+}
+
+#l3_t::-webkit-scrollbar {
+    width: 10px;
+    background: hsl(348, 100%, 44%);
+}
+
+#l3_t::-webkit-scrollbar-thumb {
+    background: hsl(348, 100%, 34%);
+}
+
+#l4_t::-webkit-scrollbar {
+    width: 10px;
+    background: hsl(141, 71%, 35%);
+}
+
+#l4_t::-webkit-scrollbar-thumb {
+    background: hsl(141, 71%, 25%);
+}
+
+#l1_t tr:nth-child(odd) {
+    background-color: hsl(48, 100%, 50%);
+}
+
+#l1_t tr:nth-child(even) {
+    background-color: hsl(48, 100%, 67%);
+}
+
+#l2_t tr:nth-child(odd) {
+    background-color: hsl(204, 86%, 40%);
+}
+
+#l2_t tr:nth-child(even) {
+    background-color: hsl(204, 86%, 53%);
+}
+
+#l3_t tr:nth-child(odd) {
+    background-color: hsl(348, 100%, 44%);
+}
+
+#l3_t tr:nth-child(even) {
+    background-color: hsl(348, 100%, 61%);
+}
+
+#l4_t tr:nth-child(odd) {
+    background-color: hsl(141, 71%, 35%);
+}
+
+#l4_t tr:nth-child(even) {
+    background-color: hsl(141, 71%, 48%);
+}

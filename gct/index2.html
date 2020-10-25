@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Online GCT Maker</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+        <script src="../navbar/init_nav.js"></script>
+        <style>
+            body {
+                background-color: hsl(43, 100%, 90%);
+                height: 100vh;
+            }
+            tr {
+                cursor: pointer;
+                width: 100%;
+                display: block;
+            }
+            tbody {
+                height: 26em;
+                overflow-y: scroll;
+                display: block;
+            }
+            #alert {
+                z-index: 1;
+                position: absolute;
+                width: max-content;
+                visibility: hidden;
+            }
+            #watermark {
+                position: fixed;
+                bottom: 5px;
+                right: 10px;
+            }
+            .top-padding {
+                padding-top: 5%;
+            }
+        </style>
+        <script type="text/javascript">
+            // GLOBALS
+            var CODES = [];
+            var SELECTED_ROW = -1;
+            var ROW_DELETE = false;
+            var UNNAMED_CODES_NR = 1;
+            var BG_HUE = 43;
+
+            function click_row(table, row) {
+                var add_code_b = document.getElementById('add_code_b');
+                var code_title = document.getElementById('code_title');
+                var code = document.getElementById('code');
+                if (row.rowIndex == SELECTED_ROW) {
+                    row.style.backgroundColor = '';
+                    SELECTED_ROW = -1;
+                    add_code_b.innerHTML = 'Add Code';
+                    code_title.value = '';
+                    code.value = '';
+                } else if (!ROW_DELETE) {
+                    if (SELECTED_ROW != -1 && CODES.length != 0) table.rows[SELECTED_ROW].style.backgroundColor = '';
+                    row.style.backgroundColor = `hsl(${BG_HUE}, 100%, 85%)`;
+                    SELECTED_ROW = row.rowIndex;
+                    add_code_b.innerHTML = 'Edit Code';
+                    code_title.value = row.childNodes[0].innerHTML;
+                    code.value = CODES[SELECTED_ROW]['text'];
+                }
+                ROW_DELETE = false;
+            }
+
+            function delete_code(table, row) {
+                if (row.rowIndex == SELECTED_ROW) {
+                    SELECTED_ROW = -1;
+                } else if (row.rowIndex < SELECTED_ROW) {
+                    SELECTED_ROW -= 1;
+                }
+                table.removeChild(row);
+                CODES.splice(row.rowIndex, 1);
+                ROW_DELETE = true;
+            }
+
+            function get_code_title() {
+                var code_title_obj = document.getElementById('code_title');
+                var code_title = code_title_obj.value;
+                if (code_title == '') {
+                    code_title = `Unnamed Code ${UNNAMED_CODES_NR}`;
+                    UNNAMED_CODES_NR += 1;
+                }
+                code_title_obj.value = '';
+                return code_title;
+            }
+
+            function make_notification(text) {
+                var notif = document.getElementById('alert');
+                notif.childNodes[0].textContent = text;
+                notif.style.marginLeft = `${(notif.parentNode.offsetWidth / 2) - notif.offsetWidth / 2}px`;
+                notif.style.visibility = 'visible';
+                setTimeout(function() {
+                    notif.style.visibility = 'hidden';
+                }, 5000);
+            }
+
+            function code_to_hex(code) {
+                var byte_array = [];
+                for (var i = 0; i < code.length; i += 2) {
+                    var byte = parseInt(code.substring(i, i + 2), 16);
+                    byte_array.push(byte);
+                }
+                return byte_array;
+            }
+
+            function get_code() {
+                var code_obj = document.getElementById('code');
+                var code = code_obj.value;
+
+                var curated_code = code.replace(/\s+/g, ''); // remove all whitespaces
+                if (curated_code.length == 0) return false;
+                if (!/^[0-9A-Fa-f]*$/.test(curated_code)) {
+                    make_notification('Code contains invalid characters');
+                    return false;
+                }
+                else if (curated_code.length % 16 != 0) {
+                    make_notification('Code length is incorrect');
+                    return false;
+                }
+                var byte_array = code_to_hex(curated_code);
+                
+                code_obj.value = '';
+                return {'text': code, 'hex': byte_array};
+            }
+
+            function add_code() {
+                var table_ref = document.getElementById('codes_table').getElementsByTagName('tbody')[0];
+                var row_ref;
+                var code = get_code();
+                if (!code) return;
+                var code_title = get_code_title();
+
+                if (SELECTED_ROW == -1) { // new code
+                    row_ref = table_ref.insertRow();
+                    // edit code functionality
+                    row_ref.onclick = function() {click_row(table_ref, row_ref);};
+                    // add code name
+                    new_cell = row_ref.insertCell(0);
+                    new_cell.style.width = '100%';
+                    new_cell.innerHTML = code_title;
+                    // add delete button
+                    new_cell = row_ref.insertCell(1);
+                    var delete_button = document.createElement('BUTTON');
+                    delete_button.className = 'delete mt-1';
+                    delete_button.style.backgroundColor = 'hsl(348, 70%, 61%)';
+                    delete_button.onclick = function() {delete_code(table_ref, row_ref);};
+                    new_cell.appendChild(delete_button);
+
+                    // add code
+                    CODES.push(code);
+                } else { // edit code
+                    row_ref =  table_ref.childNodes[SELECTED_ROW];
+                    row_ref.childNodes[0].innerHTML = code_title;
+                    CODES[SELECTED_ROW] = code;
+                    row_ref.click();
+                }
+            }
+
+            function create_gct() {
+                if (CODES.length == 0) {
+                    make_notification('No codes added');
+                    return;
+                }
+                var game_id = document.getElementById('game_id').value;
+                if (game_id == '') {
+                    make_notification('Game ID not specified');
+                    return;
+                }
+                // header
+                var gct_array = [0x00, 0xD0, 0xC0, 0xDE, 0x00, 0xD0, 0xC0, 0xDE];
+                // codes
+                for (code of CODES) {
+                    gct_array = gct_array.concat(code['hex']);
+                }
+                // terminator
+                gct_array = gct_array.concat([0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
+
+                // taken from https://stackoverflow.com/questions/27946228/file-download-a-byte-array-as-a-file-in-javascript-extjs/27963891
+                var byteArray = new Uint8Array(gct_array);
+                var a = window.document.createElement('a');
+                a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
+                a.download = `${game_id}.gct`;
+                // Append anchor to body.
+                document.body.appendChild(a);
+                a.click();
+                // Remove anchor from body
+                document.body.removeChild(a);
+            }
+
+            window.onload = function prepare() {
+                // add code functionality
+                var add_code_b = document.getElementById('add_code_b');
+                add_code_b.onclick = add_code;
+                // create gct file functionality
+                var gct_b = document.getElementById('gct_b');
+                gct_b.onclick = create_gct;
+                // generate random bg color
+                BG_HUE = Math.random() * 360;
+                document.body.style.backgroundColor = `hsl(${BG_HUE}, 100%, 90%)`;
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+                    $notification = $delete.parentNode;
+
+                    $delete.addEventListener('click', () => {
+                        $notification.style.visibility = 'hidden';
+                    });
+                });
+            });
+
+        </script>
+    </head>
+  <body>
+    <div id="nav-placeholder"></div>
+    <section class="section">
+    <div class="container">
+        <div class="notification is-danger" id="alert">
+            <p></p>
+            <button class="delete"></button>
+        </div>
+        
+        <div class="columns top-padding">
+            <div class="column is-3 is-offset-3">
+                <div class="box" style="height:32.5em;">
+                    <input class="input is-family-code mb-3" id="game_id" type="text" placeholder="Game ID">
+                    <div class="table-container">
+                        <table class="table is-striped is-fullwidth" id="codes_table">
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <button class="button is-primary is-fullwidth" id="gct_b">Download GCT</button>
+            </div>
+            <div class="column is-3">
+                <div class="box" style="height:32.5em;">
+                    <div class="container" style="width:210px;">
+                        <input class="input is-family-code mb-2" id="code_title" type="text" placeholder="Code Title">
+                        <textarea class="textarea has-fixed-size is-family-code mb-2" id="code" placeholder="Paste your code here" rows=16></textarea>
+                    </div>
+                </div>
+                <button class="button is-success is-fullwidth" id="add_code_b">Add Code</button>
+            </div>
+        </div>
+    </div>
+    </section>
+    <div id="watermark">
+        Made by WhatisLoaf
+    </div>
+  </body>
+</html>

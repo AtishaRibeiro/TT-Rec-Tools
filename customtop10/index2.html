@@ -1,0 +1,850 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+	<script src="../navbar/init_nav.js"></script>
+    <style>
+		body {
+			font-family: arial;
+			background:
+				linear-gradient(324deg, #232927 4%,   transparent 4%) -70px 43px,
+				linear-gradient( 36deg, #232927 4%,   transparent 4%) 30px 43px,
+				linear-gradient( 72deg, #414d49 8.5%, transparent 8.5%) 30px 43px,
+				linear-gradient(288deg, #414d49 8.5%, transparent 8.5%) -70px 43px,
+				linear-gradient(216deg, #414d49 7.5%, transparent 7.5%) -70px 23px,
+				linear-gradient(144deg, #414d49 7.5%, transparent 7.5%) 30px 23px,
+
+				linear-gradient(324deg, #232927 4%,   transparent 4%) -20px 93px,
+				linear-gradient( 36deg, #232927 4%,   transparent 4%) 80px 93px,
+				linear-gradient( 72deg, #414d49 8.5%, transparent 8.5%) 80px 93px,
+				linear-gradient(288deg, #414d49 8.5%, transparent 8.5%) -20px 93px,
+				linear-gradient(216deg, #414d49 7.5%, transparent 7.5%) -20px 73px,
+				linear-gradient(144deg, #414d49 7.5%, transparent 7.5%) 80px 73px;
+				background-color: #232927;
+				background-size: 100px 100px;
+		}
+		#wrapper {
+  			margin: auto;
+		}
+		table {
+			display: flex;
+			justify-content: center;
+		}
+		td {
+			padding-left: 10px;
+			padding-right: 10px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+		}
+		tr:nth-child(even) {
+			background-color: #8b4fc2;
+		}
+		tr:nth-child(odd) {
+			background-color: #6f32a8;
+		}
+		input {
+			text-align: center;
+			border: none;
+		}
+		.main_table_td {
+			background-color: black;
+			padding-left: 5px;
+			padding-right: 5px;
+			height: 100%;
+		}
+		.top_table {
+			max-width: 900px;
+		}
+		.custom_button {
+			font-weight: bold;
+			text-align: center;
+			cursor: pointer;
+		}
+		.time_input {
+			width: 40px;
+		}
+		.normal_input {
+			background-color: #A060D0;
+		}
+		#rankings_title {
+			background-color:#A060D0;
+			margin: 0 auto;
+			width: 100%;
+			height: 30px;
+			font-weight: bold;
+			font-size: 20px;
+		}
+		.country_selector {
+			width: 100px;
+		}
+		.rkg_dropper {
+			display: flex;
+			justify-content: center;
+			width: 300px;
+		}
+		input[type="file"] {
+			display: none;
+		}
+		.custom-file-upload {
+			display: inline-block;
+			padding: 6px 12px;
+			cursor: pointer;
+			width: 100%;
+			text-align: center;
+		}
+    </style>
+    <script type="text/javascript">
+	
+		const COUNTRIES = [
+			["NO FLAG", 255, ""],
+			["Japan", 1, "19606363"],
+			["Antarctica", 2, ""],
+			["Caribbean Netherlands", 3, ""],
+			["FalkLand Islands", 4, ""],
+			["Scotland", 5, "27CAFDB9"],
+			["Wales", 6, "249BFDBE"],
+			["Sint Maarten", 7, ""],
+			["Anguilla", 8, "0CF4D32B"],
+			["Antigua and Barbuda", 9, "0C2BD405"],
+			["Argentina", 10, "E729D6CB"],
+			["Aruba", 11, "08E6CE33"],
+			["Bahamas", 12, "11D6C8FF"],
+			["Barbados", 13, "0950D59C"],
+			["Belize", 14, "0C44C0E1"],
+			["Bolivia", 15, "F445CF8A"],
+			["Brazil", 16, "EFB8E142"],
+			["British Virgin Islands", 17, "0D18D20D"],
+			["Canada", 18, "2379BAEB"],
+			["Cayman Islands", 19, "0DB9C621"],
+			["Chile", 20, "E837CDC0"],
+			["Colombia", 21, "0305CB40"],
+			["Costa Rica", 22, "0710C436"],
+			["Dominica", 23, "0AE1D457"],
+			["Dominican Republic", 24, "0D21CE4C"],
+			["Ecuador", 25, "FFD9C82E"],
+			["El Salvador", 26, "09BFC092"],
+			["French Guiana", 27, "0382DACA"],
+			["Grenada", 28, "0891D417"],
+			["Guadeloupe", 29, "0B60D41D"],
+			["Guatemala", 30, "0A65BFA1"],
+			["Guyana", 31, "04D5D6A4"],
+			["Haiti", 32, "0D2ECC90"],
+			["Honduras", 33, "0A06C1FB"],
+			["Jamaica", 34, "0CCCC963"],
+			["Martinique", 35, "0A61D491"],
+			["Mexico", 36, "0DB7B921"],
+			["Montserrat", 37, "0BE0D3C2"],
+			["Netherlands Antilles", 38, "089ACEFF"],
+			["Nicaragua", 39, "08A3C2A8"],
+			["Panama", 40, "0660C772"],
+			["Paraguay", 41, "EE09D6FF"],
+			["Peru", 42, "F76FC936"],
+			["St. Kitts and Nevis", 43, "0C4DD367"],
+			["St. Lucia", 44, "09F4D4A0"],
+			["St. Vincent and Grenadines", 45, "0956D478"],
+			["Suriname", 46, "0425D8C6"],
+			["Trinidad and Tobago", 47, "0792D442"],
+			["Turks and Caicos Islands", 48, "0F43CD6B"],
+			["USA", 49, "1BC4BBF7"],
+			["Uruguay", 50, "E737D80F"],
+			["U.S. Virgin Islands", 51, "0D0BD1D4"],
+			["Venezuela", 52, "0777D06B"],
+			["Armenia", 53, ""],
+			["Belarus", 54, ""],
+			["Georgia", 55, ""],
+			["Kosovo", 56, "1E540F0B"],
+			["Abkhazia", 57, ""],
+			["Artsakh", 58, ""],
+			["Northern Cyprus", 59, "190117BB"],
+			["South Ossetia", 60, ""],
+			["Transnistria", 61, ""],
+			["Åland", 62, ""],
+			["Faroe Islands", 63, ""],
+			["Albania", 64, "1D630E19"],
+			["Australia", 65, "E72C6291"],
+			["Austria", 66, "22470BA4"],
+			["Belgium", 67, "2427031B"],
+			["Bosnia and Herzegovina", 68, "1F2F0D17"],
+			["Botswana", 69, "EE79126B"],
+			["Bulgaria", 70, "1E5E1092"],
+			["Croatia", 71, "20920B5A"],
+			["Cyprus", 72, "190117BB"],
+			["Czechia", 73, "239B0A43"],
+			["Denmark", 74, "279A08ED"],
+			["Estonia", 75, "2A431196"],
+			["Finland", 76, "2AC911BB"],
+			["France", 77, "22BD01AB"],
+			["Germany", 78, "25590988"],
+			["Greece", 79, "1B0110DE"],
+			["Hungary", 80, "21C50D91"],
+			["Iceland", 81, "2D9BF06F"],
+			["Ireland", 82, "25EEFB8D"],
+			["Italy", 83, "1DCA08E1"],
+			["Latvia", 84, "287F1120"],
+			["Lesotho", 85, "EB271388"],
+			["Liechtenstein", 86, "218506C5"],
+			["Lithuania", 87, "26E211FA"],
+			["Luxembourg", 88, "2347045B"],
+			["North Macedonia", 89, "1DDE0F40"],
+			["Malta", 90, "19870A52"],
+			["Montenegro", 91, ""],
+			["Mozambique", 92, "ED891728"],
+			["Namibia", 93, "EFF70C25"],
+			["Netherlands", 94, "253D0379"],
+			["New Zealand", 95, "E29F7C4A"],
+			["Norway", 96, "2A9F079D"],
+			["Poland", 97, "25260EF0"],
+			["Portugal", 98, "1B89F980"],
+			["Romania", 99, "1F98128C"],
+			["Russia", 100, "27A81ABF"],
+			["Serbia", 101, "1FE10E91"],
+			["Slovakia", 102, "223D0C2D"],
+			["Slovenia", 103, "20BF0A50"],
+			["South Africa", 104, "ED6913F2"],
+			["Spain", 105, "1CBDFD5E"],
+			["Eswatini", 106, "ED491624"],
+			["Sweden", 107, "2A280CDA"],
+			["Switzerland", 108, "21630546"],
+			["Turkey", 109, "1C64175C"],
+			["United Kingdom", 110, "24A0FFEB"],
+			["Zambia", 111, "F50A141C"],
+			["Zimbabwe", 112, "F3541614"],
+			["Azerbaijan", 113, "1CB6237A"],
+			["Mauritania", 114, "0CDFF4A9"],
+			["Mali", 115, "08FEFA50"],
+			["Niger", 116, "099D017F"],
+			["Chad", 117, "089C0AB1"],
+			["Sudan", 118, "0B1D1722"],
+			["Eritrea", 119, "0AE71BAF"],
+			["Djibouti", 120, "083D1EAE"],
+			["Somalia", 121, "0172203F"],
+			["Andorra", 122, ""],
+			["Gibraltar", 123, ""],
+			["Guernsey", 124, ""],
+			["Isle of Man", 125, "2684FCD0"],
+			["Jersey", 126, ""],
+			["Monaco", 127, ""],
+			["Taiwan", 128, "11CD5667"],
+			["Cambodia", 129, ""],
+			["Laos", 130, ""],
+			["Mongolia", 131, ""],
+			["Myanmar", 132, ""],
+			["Nepal", 133, ""],
+			["Vietnam", 134, ""],
+			["North Korea", 135, ""],
+			["South Korea", 136, "1AAA5A4F"],
+			["Bangladesh", 137, ""],
+			["Bhutan", 138, ""],
+			["Brunei", 139, ""],
+			["Maldives", 140, ""],
+			["Sri Lanka", 141, ""],
+			["Timor-Leste", 142, ""],
+			["British Indian Ocean Territory", 143, ""],
+			["Hong Kong", 144, "0FF95147"],
+			["Macao", 145, "0FCC50C8"],
+			["Cook Islands", 146, ""],
+			["Niue", 147, ""],
+			["Norfolk Island", 148, ""],
+			["Northern Mariana Islands", 149, ""],
+			["American Samoa", 150, ""],
+			["Guam", 151, ""],
+			["Indonesia", 152, "FB9C4BF7"],
+			["Signapore", 153, "00EB49DA"],
+			["Thailand", 154, "09C7477A"],
+			["Philippines", 155, "0A625608"],
+			["Malaysia", 156, "02404851"],
+			["St. Barthélemy", 157, ""],
+			["St. Martin", 158, ""],
+			["St. Pierre and Miquelon", 159, ""],
+			["China", 160, "1C6252CC"],
+			["Afghanistan", 161, ""],
+			["Kazakhstan", 162, ""],
+			["Kyrgyzstan", 163, ""],
+			["Pakistan", 164, ""],
+			["Tajikistan", 165, ""],
+			["Turkmenistan", 166, ""],
+			["Uzbekistan", 167, ""],
+			["United Arab Emirates", 168, "116626A9"],
+			["India", 169, "145636E5"],
+			["Egypt", 170, "155E1638"],
+			["Oman", 171, "10CA29AA"],
+			["Qatar", 172, "11FB24A5"],
+			["Kuwait", 173, "14E2221E"],
+			["Saudi Arabia", 174, "11852142"],
+			["Syria", 175, "17D219D0"],
+			["Bahrain", 176, "12A823F8"],
+			["Jordan", 177, "16B8198D"],
+			["Iran", 178, ""],
+			["Iraq", 179, ""],
+			["Israel", 180, ""],
+			["Lebanon", 181, ""],
+			["Palestine", 182, ""],
+			["Yemen", 183, ""],
+			["San Marino", 184, ""],
+			["Vatican City", 185, ""],
+			["Bermuda", 186, ""],
+			["French Polynesia", 187, ""],
+			["Réunion", 188, ""],
+			["Mayotte", 189, ""],
+			["New Caledonia", 190, ""],
+			["Wallis and Futuna", 191, ""],
+			["Nigeria", 192, ""],
+			["Angola", 193, ""],
+			["Ghana", 194, ""],
+			["Togo", 195, ""],
+			["Benin", 196, ""],
+			["Burkina Faso", 197, ""],
+			["Côte d'Ivoire", 198, ""],
+			["Liberia", 199, ""],
+			["Sierra Leone", 200, ""],
+			["Guinea", 201, ""],
+			["Guinea-Bissau", 202, ""],
+			["Senegal", 203, ""],
+			["The Gambia", 204, ""],
+			["Cape Verde", 205, ""],
+			["St. Helena, Ascension and Tristan da Cunha", 206, ""],
+			["Moldova", 207, ""],
+			["Ukraine", 208, ""],
+			["Cameroon", 209, ""],
+			["Central African Republic", 210, ""],
+			["Democratic Republic of the Congo", 211, ""],
+			["Republic of the Congo", 212, ""],
+			["Equatorial Guinea", 213, "F50A141C"],
+			["Gabon", 214, ""],
+			["São Tomé and Príncipe", 215, ""],
+			["Algeria", 216, ""],
+			["Ethiopia", 217, ""],
+			["Libya", 218, ""],
+			["Morocco", 219, ""],
+			["South Sudan", 220, ""],
+			["Tunisia", 221, ""],
+			["Sahrawi Arab Democratic Republic", 222, ""],
+			["Cuba", 223, ""],
+			["Burundi", 224, ""],
+			["Comoros", 225, ""],
+			["Kenya", 226, ""],
+			["Madagascar", 227, ""],
+			["Malawi", 228, ""],
+			["Mauritius", 229, ""],
+			["Rwanda", 230, ""],
+			["Seychelles", 231, ""],
+			["Tanzania", 232, ""],
+			["Uganda", 233, ""],
+			["French Southern and Antarctic Lands", 234, ""],
+			["Pitcairn Islands", 235, ""],
+			["British Antarctic Territory", 236, ""],
+			["South Georgia and the South Sandwich Islands", 237, ""],
+			["Federated States of Micronesia", 238, ""],
+			["Fiji", 239, ""],
+			["Kiribati", 240, ""],
+			["Marshall Islands", 241, ""],
+			["Nauru", 242, ""],
+			["Palau", 243, ""],
+			["Papua New Guinea", 244, ""],
+			["Samoa", 245, ""],
+			["Solomon Islands", 246, ""],
+			["Tokelau", 247, ""],
+			["Tonga", 248, ""],
+			["Tuvalu", 249, ""],
+			["Vanuatu", 250, ""],
+			["Christmas Island", 251, ""],
+			["Cocos (Keeling) Islands", 252, ""],
+			["Puerto Rico", 253, "0D22D0FE"],
+			["Greenland", 254, "2DA4DB39"],
+		];
+
+		const REGION_DATA = {
+			"ww": ["Worldwide"],
+			"reg": ["Europe", "North America", "Americas", "Latin America", "Asia", "Oceania"],
+			"cntr":[]
+		};
+
+		var DEFAULT_MII =
+            [0x80, 0x00, 0x00, 0x50, 0x00, 0x6c, 0x00, 0x61, 
+			0x00, 0x79, 0x00, 0x65, 0x00, 0x72, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x85, 0x41, 0x9F, 0x4B, 0x00, 0x04, 0x42, 0x40,
+            0x31, 0xBD, 0x28, 0xA2, 0x08, 0x8C, 0x08, 0x40,
+            0x14, 0x49, 0xB8, 0x8D, 0x00, 0x8A, 0x00, 0x8A, 0x25, 0x04];
+
+		var ISO_CODES = {
+			// [flag changer, globe position, custom title, top 10, bypass crc]
+			"PAL": ["0242ABD8", "0442BBDC", "C25CDDCC", "C260BFAC", "040C997C"],
+			"NTSC-U": ["02426858", "0442785C", "C25C12AC", "C26414CC", "040C98DC"],
+			"NTSC-J": ["0242A558", "0442B55C", "C25CD6A8", "C260B720", "040C989C"],
+			"NTSC-K": ["02418BF8", "04419BFC", "C25BBD8C", "C25FA3CC", "040C99DC"],
+		}
+
+		var MII_DATA = [DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice(),
+		DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice(), DEFAULT_MII.slice()];
+
+		var ISO_REG = "PAL";
+		var GLOBE_REG = "ww";
+		var GLOBE_POS = "2427031B";
+
+		function get_country_value(key, value) {
+			// key: index of the key
+			// value: value to look for
+			for (country of COUNTRIES) {
+				if (country[key] == value) return country;
+			}
+			return ["", 0xFF, "2427031B"];
+		}
+
+		function get_country_names() {
+			var country_names = [];
+			for (country of COUNTRIES) {
+				if (country != COUNTRIES[0][0]) country_names.push(country[0]);
+			}
+			return country_names;
+		}
+
+		//////////////////////////////////////////////
+		// HTML STYLING/FUNCTIONALITY FUNCTIONS
+		//////////////////////////////////////////////
+
+		window.onload = function prepare() {
+			// create all entries in the top 10 table
+			var entries = '<tr><td colspan=2><input id="track_include" type="checkbox" checked><b>Show track name</b></input></td>'
+			entries += '<td colspan=4><input id="rankings_title" type="text" maxlength="40"></td></tr>';
+			entries += '<tr><th>Position</th><th>Country</th><th>Name</th><th>Time</th><th>Wheel</th><th>Ghost File</th></tr>';
+			for (i = 0; i < 10; i++) {
+				var bg = "#A060D0";
+				if (i % 2 == 1) {
+					bg = "#7040B0";
+				}
+				entries += `<tr><td><div style="text-align:center;"><b>${i+1}</b></div></td>`;
+				entries += `<td><select class="country_selector" id="country_${i}"></select></td>`;
+				entries += `<td><input style="background-color:${bg}" id="name_${i}" type="text" maxlength="10" value="Player"></td>`;
+				entries += `<td><input style="background-color:${bg}" class="time_input" id="min_${i}" type="text" pattern="[0-9]" maxlength="1" value="0"><b> : </b>`;
+				entries += `<input style="background-color:${bg}" class="time_input" id="sec_${i}" type="text" pattern="[0-9]{2}" onblur="truncate_s(this)" maxlength="2" value="00"><b> . </b>`;
+				entries += `<input style="background-color:${bg}" class="time_input" id="mil_${i}" type="text" pattern="[0-9]{3}" maxlength="3" value="000"></td>`;
+				entries += `<td><input style="background-color:${bg}" id="wheel_${i}" type="checkbox"></td>`;
+				entries += `<td class="rkg_dropper"><label id="rkg_label_${i}" for="rkg_${i}" class="custom-file-upload">No File Selected</label>
+				<input id="rkg_${i}" type="file" accept=".rkg" multiple="multiple" onchange="handle_files(this)"/></td></tr>`;
+			}
+			document.getElementById("top10_table").innerHTML = entries;
+
+			// add countries as options to the input fields
+			var options = `<option value="${COUNTRIES[0][0]}">${COUNTRIES[0][0]}</option>`;
+			for (loc of get_country_names().sort()) {
+				options += `<option value="${loc}">${loc}</option>`;
+			}
+			const selectors = document.getElementsByClassName("country_selector");
+			for (selector of selectors) {
+				selector.innerHTML = options;
+			}
+
+			// set all event functions
+			function selector_onclick(classname, rr) {
+				return function() {
+					this.style.backgroundColor = '#ffd000';
+					var other_divs = document.getElementsByClassName(classname);
+					for (div of other_divs) {
+						if (div.id !== this.id) {
+							div.style.backgroundColor = '#A060D0';
+						}
+					}
+					if (rr) {
+						set_values_on_click(this.id);
+					} else {
+						ISO_REG = this.id;
+					}
+				}
+			}
+			var rr_selectors = document.getElementsByClassName('rr_selector');
+			for (rr_selector of rr_selectors) {
+				rr_selector.onclick = selector_onclick('rr_selector', true);
+			}
+
+			var ir_selectors = document.getElementsByClassName('ir_selector');
+			for (ir_selector of ir_selectors) {
+				ir_selector.onclick = selector_onclick('ir_selector', false);
+			}
+
+			// set all default selected fields
+			document.getElementById('ww').click();
+			document.getElementById('PAL').click();
+			set_values_on_click('ww');
+		}
+
+		function set_values_on_click(region) {
+			var locs;
+			var title;
+			GLOBE_REG = region;
+			if (region == 'ww') {
+				locs = ['Worldwide'];
+			} else if (region == 'reg') {
+				locs = ["Europe", "North America", "Americas", "Latin America", "Asia", "Oceania"];
+			} else {
+				locs = get_country_names().sort();
+			}
+			var options = '';
+			for (loc of locs) {
+				options += `<option value="${loc}">${loc}</option>`;
+			}
+			document.getElementById('location_selector').innerHTML = options;
+			select_region(document.getElementById("location_selector"));
+		}
+
+		function select_region(selected_object) {
+			const value = selected_object.value;
+			const globe_positions = {
+				"ww": {"Worldwide": "Belgium"},
+				"reg": {
+					"Europe": "Germany",
+					"North America": "USA",
+					"Americas": "Mexico",
+					"Latin America": "Paraguay",
+					"Asia": "Hong Kong",
+					"Oceania": "Australia"
+					},
+			}
+			if (GLOBE_REG == "cntr") {
+				GLOBE_POS = get_country_value(0, value)[2];
+				if (GLOBE_POS == "") GLOBE_POS = "2427031B"; // set default globe position
+			} else {
+				GLOBE_POS = get_country_value(0, globe_positions[GLOBE_REG][value])[2];
+			}
+			document.getElementById('rankings_title').value = value + " Top 10";
+		}
+
+		function truncate_s(s_field) {
+			// cap the second field at 59 seconds
+			const seconds = s_field.value;
+			if (parseInt(seconds) >= 60) {
+				s_field.value = "59";
+			}
+		}
+
+		function hold_button(button_object) {
+			button_object.style.backgroundColor = '#ffd000';
+		}
+
+		function release_button(button_object) {
+			button_object.style.backgroundColor = '#8b4fc2';
+			if (button_object.id == 'start_button') {
+				generate();
+			} else if (button_object.id == 'copy_button') {
+				// copy the generated code to the clipboard
+				const copy_text = document.getElementById("result");
+				copy_text.select();
+				copy_text.setSelectionRange(0, 99999); /*For mobile devices*/
+				document.execCommand("copy");
+			}
+		}
+
+		function handle_files(button_object) {
+			const files = button_object.files;
+			const start_pos = parseInt(button_object.id.split('_')[1]);
+			var all_entries = [];
+			var cur_entry = 0;
+			
+			for (file of files) {
+				const reader = new FileReader();
+				reader.readAsArrayBuffer(file);
+				reader.onload = function(){
+					const arrayBuffer = this.result;
+					const array = new Uint8Array(arrayBuffer);
+					var entry_data = handle_rkg_file(array);
+					entry_data["file_name"] = files[cur_entry]["name"];
+					all_entries.push(entry_data);
+					if (cur_entry == files.length - 1) {
+						// sort entries on finish time
+						all_entries.sort(function(a, b) {
+							var keyA = a["total_time"],
+								keyB = b["total_time"];
+							if (keyA < keyB) return -1;
+							if (keyA > keyB) return 1;
+							return 0;
+						});
+						set_new_entries(start_pos, all_entries);
+					}
+					cur_entry++;
+				};
+			}
+		}
+
+		function handle_rkg_file(byte_array) {
+			var time_1 = byte_array[4];
+			var time_2 = byte_array[5];
+			var time_3 = byte_array[6];
+			var controller = byte_array[11];
+			var country = byte_array[52];
+			var mii_data_full = byte_array.slice(60, 134);
+            var mii_data = new Uint8Array([...mii_data_full.slice(0, 28), ...mii_data_full.slice(32, 54)]); //js is so wack, wtf are these dots
+
+			// extract the time
+			var min = time_1 >> 0x1;
+			var sec = ((time_1 & 0x1) << 0x6) | (time_2 >> 0x2);
+			var mil = ((time_2 & 0x3) << 0x8) | time_3;
+			// extract the mii name
+			var mii_name = "";
+			for (var i = 2; i < 22; i += 2) {
+				var char_code = (mii_data[i] << 8) | mii_data[i+1];
+				if (char_code == 0) break;
+				mii_name += String.fromCharCode(char_code);
+			}
+
+			var entry_data = {
+				"total_time": min * 60000 + sec * 1000 + mil,
+				"min": min,
+				"sec": sec,
+				"mil": mil,
+				"wheel": (controller & 0xf) == 0,
+				"country": country,
+				"mii_name": mii_name,
+				"mii_data": mii_data
+			};
+			return entry_data;
+		}
+
+		function set_new_entries(start_pos, entries) {
+			for (var i = 0; i < entries.length; i++) {
+				var current_pos = start_pos + i;
+				if (current_pos >= 10) break;
+				var current_entry = entries[i];
+				document.getElementById(`country_${current_pos}`).value = get_country_value(1, current_entry["country"])[0];
+				document.getElementById(`name_${current_pos}`).value = current_entry["mii_name"];
+				document.getElementById(`min_${current_pos}`).value = current_entry["min"];
+				document.getElementById(`sec_${current_pos}`).value = pad(current_entry["sec"], 2, 10);
+				document.getElementById(`mil_${current_pos}`).value = pad(current_entry["mil"], 3, 10);
+				document.getElementById(`wheel_${current_pos}`).checked = current_entry["wheel"];
+				document.getElementById(`rkg_label_${current_pos}`).innerHTML = current_entry["file_name"];
+				MII_DATA[current_pos] = current_entry["mii_data"];
+			}
+		}
+
+		//////////////////////////////////////////////
+		// CODE GENERATION FUNCTIONS
+		//////////////////////////////////////////////
+	
+		var code;
+
+		function generate(){
+			// main function that generates the code
+			code = [];
+            crc16_bypass_code();
+			globe_position_code();
+			custom_title_code();
+
+			// don't do anything if nothing was filled in
+			var code_text = "Nothing filled in!";
+			if (top_10_code()) {
+				// format the code
+				for (var i=0; i<code.length; i++) {
+					code[i] += i%2 == 0 ? " " : "\n";
+				}
+				code_text = code.join("").slice(0, -1).toUpperCase();
+			}
+			document.getElementById("result").value = code_text;
+		}
+
+        function crc16_bypass_code() {
+            code = code.concat([ISO_CODES[ISO_REG][4], "48000010"]);
+        }
+
+		function globe_position_code() {
+			if (GLOBE_REG != "ww") {
+				code = code.concat([ISO_CODES[ISO_REG][0], "00004303",
+								ISO_CODES[ISO_REG][1], GLOBE_POS]);
+			}
+		}
+
+		function custom_title_code() {
+			title_code = [ISO_CODES[ISO_REG][2], "XXXXXXXX",
+							"7D6802A6", "YYYYYYYY"];
+
+			var hex_title = "";
+			if (document.getElementById("track_include").checked) {
+				// this is string that will be replaced by the track name
+				hex_title += "001A0802001100000020";
+			}
+			hex_title += utf_16_hex(document.getElementById("rankings_title").value);
+			data_length = Math.ceil(hex_title.length / 8);
+			for (var i = 0; i < data_length; i++) {
+				var string_index = i * 8;
+				var string_part = hex_title.slice(string_index, string_index + 8);
+				if (string_part.length != 8) string_part = (string_part + "0".repeat(8)).slice(0, 8);
+				title_code.push(string_part);
+			}
+			if (title_code.slice(-1).slice(4,8) != "0000") {
+				title_code.push("00000000");
+				data_length += 1;
+			}
+
+			title_code = title_code.concat(["2C0E1776", "4082000C",
+											"7C6802A6", "90610020",
+											"7EA3AB78", "7D6803A6"])
+			
+			if (title_code.length % 2 == 0) title_code.push("60000000");
+			title_code.push("00000000");
+			title_code[1] = pad(title_code.length / 2 - 1, 8);
+			title_code[3] = "48" + pad((data_length + 1) * 4 + 1, 6);
+			code = code.concat(title_code);
+		}
+
+
+
+        function top_10_code() {
+			var total_entries = get_entry_count();
+			if (total_entries == 0) return false;
+			var entries = "398000" + pad(total_entries, 2);
+			var branch = "48" + pad(0x05 + total_entries * 0x38, 6);
+			
+			var top_10_code = [ISO_CODES[ISO_REG][3], null,
+                                "BE41FFC8", "38800000",
+                                "39800001", "91830058", 
+                                entries   , "91830060",
+                                "7D8903A6", "39630068", 
+                                branch];
+														
+			for(var i = 0; i < total_entries; i++) {
+				// get all data from the form
+				const index = i.toString();
+				var name = document.getElementById("name_"+index).value;
+				var minutes = parseInt(document.getElementById("min_"+index).value);
+				var seconds = parseInt(document.getElementById("sec_"+index).value);
+				var milliseconds = parseInt(document.getElementById("mil_"+index).value);
+				var country = get_country_value(0, document.getElementById("country_"+index).value)[1];
+				var wheel = document.getElementById("wheel_"+index).checked;
+
+				// convert to hex strings
+				minutes = pad(minutes, 2);
+				seconds = pad(seconds, 2);
+				milliseconds = pad(milliseconds, 4);
+				country = pad(country, 2);
+				wheel = pad(wheel ? 0 : 1, 2);
+				
+				// insert the time
+				top_10_code.push([milliseconds + minutes + seconds]);
+				
+				// insert mii name
+				replace_mii_name(i, name);
+
+                var bytes = "";
+				// add all the mii data
+                for (var j = 0; j < MII_DATA[i].length - 2; j += 4) {
+                    for (k = 0; k < 4; k++) {
+						bytes += pad(MII_DATA[i][j + k], 2);
+					}
+					console.log(bytes);
+                    top_10_code.push(bytes);
+                    bytes = "";
+                }
+
+                // insert remaining variables
+                bytes = pad(MII_DATA[i][MII_DATA[i].length - 2], 2) + pad(MII_DATA[i][MII_DATA[i].length - 1], 2) + country + wheel;
+				top_10_code.push(bytes);
+			}
+            
+			top_10_code = top_10_code.concat(["7D8802A6",
+												"BA4C0000", "B24B0001",
+												"924B0004", "BE6B0008",
+												"BF4B0028", "9BEB0057",
+												"B3EB0060", "398C0038",
+												"396B0068", "4200FFDC",
+												"7C0803A6", "BA41FFC8",])
+
+			if (top_10_code.length % 2 == 0) top_10_code.push("60000000");
+			top_10_code.push("00000000");
+            top_10_code[1] = pad((top_10_code.length / 2) - 1, 8); // set code length
+            code = code.concat(top_10_code);
+			return true;
+        }
+
+		function pad(value, length, base=16) {
+			return ("0".repeat(length) + value.toString(base)).slice(-length);
+		}
+
+		function utf_16_hex(string) {
+			var hex_string = "";
+			for (var i = 0; i < string.length; i++) {
+				hex_string += pad(string.charCodeAt(i), 4);
+			}
+			return hex_string;
+		}
+
+		function replace_mii_name(mii_index, mii_name) {
+			var mii = MII_DATA[mii_index];
+			var hex_string = utf_16_hex(mii_name);
+			// pad so it fills 10 characters
+			hex_string = hex_string + "0000".repeat(10).slice(0, 40);
+
+			for (var i = 0; i < 10; i++) {
+				var string_index = i*4;
+				mii[2 + 2*i] = parseInt(hex_string.slice(string_index, string_index + 2), 16);
+				mii[3 + 2*i] = parseInt(hex_string.slice(string_index + 2, string_index + 4), 16);
+			}
+		}
+
+		function get_entry_count() {
+			// figure out how many times were actually entered
+			for(var i=9; i>=0; i--) {
+				var name = document.getElementById("name_"+i).value;
+				var minutes = parseInt(document.getElementById("min_"+i).value);
+				var seconds = parseInt(document.getElementById("sec_"+i).value);
+				var milliseconds = parseInt(document.getElementById("mil_"+i).value);
+				if (name == "Player" && minutes == "0" && seconds == "00" && milliseconds == "000") continue;
+				return i + 1;
+			}
+			return 0;
+		}
+		
+    </script>
+</head>
+<body>
+	<div id="nav-placeholder"></div>
+	<div id="wrapper">
+		<datalist id="countries_datalist"></datalist>
+		<table id="main_table">
+			<tr><td class="main_table_td">
+				<table id="top_table">
+					<tr><th>About</th><th>ISO Region</th><th>Rankings Region</th><th>Globe Location</th></tr>
+					<tr>
+						<td rowspan=4 style="width:428px; text-align: center;">
+							<b>
+							<p>Made by WhatisLoaf <br><a href="https://www.mariokartboards.com/threads/custom-time-trial-rankings.7671/">Info</a></p>						
+							<p>Credits:<br>
+							Vega: mkwii.com, globe positions, CRC bypass code<br>
+							Anarion: globe position code</p>
+							</b>
+						</td>
+						<td class="custom_button ir_selector" id="PAL">PAL</td>
+						<td class="custom_button rr_selector" id="ww">Worldwide</td>
+						<td class="normal_input" rowspan=3><select id="location_selector" style="width:200px" onchange="select_region(this)"></select></td>
+					</tr>
+					<tr>
+						<td class="custom_button ir_selector" id="NTSC-U">NTSC-U</td>
+						<td class="custom_button rr_selector" id="reg">Regional</td>
+					</tr>
+					<tr>
+						<td class="custom_button ir_selector" id="NTSC-J">NTSC-J</td>
+						<td class="custom_button rr_selector" id="cntr">Country</td>
+					</tr>
+					<tr>
+						<td class="custom_button ir_selector" id="NTSC-K">NTSC-K</td>
+						<td colspan=2></td>
+					</tr>
+				</table>
+			</td>
+			<td class="main_table_td" rowspan="2">
+				<table style="background-color: #6f32a8; height: 100%;">
+					<tr>
+						<td colspan=2>
+						<textarea readonly id="result" cols="17" rows="38" style="background-color: #8b4fc2;resize:none;"></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td class="custom_button" id="start_button" onmousedown="hold_button(this)" onmouseup="release_button(this)">Start</td>
+						<td class="custom_button" id="copy_button" onmousedown="hold_button(this)" onmouseup="release_button(this)">Copy</td>
+					</tr>
+				</table>
+			</td></tr>
+			<tr><td class="main_table_td">
+				<table id="top10_table"></table>
+			</td></tr>
+		</table>
+	</div>
+</body>
+</html>

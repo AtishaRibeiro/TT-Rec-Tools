@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Ghost Manager</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+        <link rel="stylesheet" type="text/css" href="Style/style.css"  />
+        <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+        <script src="../navbar/init_nav.js"></script>
+        <script src="Scripts/YAZ1_decomp.js"></script>
+        <script src="Scripts/YAZ1_comp.js"></script>
+        <script src="Scripts/jszip.js"></script>
+        <script src="Scripts/savedata_handling.js"></script>
+        <script src="Scripts/page_functionality.js"></script>
+    </head>
+    <body>
+        <div id="nav-placeholder"></div>
+        <section class="section">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-half">
+                    <div id="rksys" class="file is-fullwidth has-name is-boxed">
+                        <label class="file-label">
+                            <input id="rksys-input" class="file-input" type="file" name="resume">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    <p>Upload <b>rksys.dat</b> file </p>
+                                </span>
+                            </span>
+                            <span class="file-name">
+                                No file uploaded
+                            </span>
+                        </label>
+                    </div>
+                    <div class="tabs is-toggle is-fullwidth" id="tabs">
+                        <ul>
+                            <li class="is-active" data-tab="1">
+                                <a>
+                                <span class="icon is-small"><i class="fas fa-file-import" aria-hidden="true"></i></span>
+                                <span>Import Ghosts</span>
+                                </a>
+                            </li>
+                            <li data-tab="2">
+                                <a>
+                                <span class="icon is-small"><i class="fas fa-file-export" aria-hidden="true"></i></span>
+                                <span>Export Ghosts</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div> 
+            </div>
+            <div id="tab-content">
+                <div class="columns is-centered">
+                    <div class="column is-4 license-col">
+                        <div id="l1" class="license-div">
+                            <p class="t-header is-size-5 has-text-weight-bold">License 1</p>
+                            <div class="table-container">
+                                <table class="table is-fullwidth">
+                                    <tbody id="l1_t">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <button id="button1" class="button rkg-button is-fullwidth is-warning">
+                            <input id="rkg1" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
+                            <i class="fas fa-upload"></i>
+                            &nbsp; Upload RKG
+                        </button>
+                    </div>
+                    <div class="column is-4 license-col">
+                        <div id="l2" class="license-div">
+                            <p class="t-header is-size-5 has-text-weight-bold">License 2</p>
+                            <div class="table-container">
+                                <table class="table is-fullwidth">
+                                    <tbody id="l2_t">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <button id="button2" class="button rkg-button is-fullwidth is-info has-text-black">
+                            <input id="rkg2" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
+                            <i class="fas fa-upload"></i>
+                            &nbsp; Upload RKG
+                        </button>
+                    </div>
+                </div>
+                <div class="columns is-centered">
+                    <div class="column is-4 license-col">
+                        <div id="l3" class="license-div">
+                            <p class="t-header is-size-5 has-text-weight-bold">License 3</p>
+                            <div class="table-container">
+                                <table class="table is-fullwidth">
+                                    <tbody id="l3_t">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <button id="button3" class="button rkg-button is-fullwidth is-danger has-text-black">
+                            <input id="rkg3" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
+                            <i class="fas fa-upload"></i>
+                            &nbsp; Upload RKG
+                        </button>
+                    </div>
+                    <div class="column is-4 license-col">
+                        <div id="l4" class="license-div">
+                            <p class="t-header is-size-5 has-text-weight-bold">License 4</p>
+                            <div class="table-container">
+                                <table class="table is-fullwidth">
+                                    <tbody id="l4_t">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <button id="button4" class="button rkg-button is-fullwidth is-success has-text-black">
+                            <input id="rkg4" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
+                            <i class="fas fa-upload"></i>
+                            &nbsp; Upload RKG
+                        </button>
+                    </div>
+                </div>
+                <div class="columns is-centered">
+                    <div class="column is-half">
+                        <button class="button is-fullwidth" id="import-save-butt">Import & Download</button>
+                    </div>
+                </div>
+        </div>
+        
+        <div id="watermark">
+            Made by WhatisLoaf
+        </div>
+        </section>
+    </body>
+</html>
