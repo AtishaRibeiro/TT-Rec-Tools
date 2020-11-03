@@ -1,0 +1,74 @@
+<div class="has-text-centered" style="margin-bottom: 2em;">
+    <p class="is-size-4 has-text-weight-semibold">How To</p>
+    <p class="is-size-3 has-text-weight-bold">MSG Editor</p>
+</div>
+<div class="has-text-left">
+    <p>
+        This tool generates a Gecko code that allows you to modify in game text.
+    </p>
+
+    <hr class="hr" style="margin-bottom: 0;">
+    <p class="is-size-4 has-text-weight-bold ">
+        Overview
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        What is a message?
+    </p>
+    <p>
+        MKWii uses messages to manage in game text. Every message has an <span class="tag is-info is-light">ID</span> and a <span class="tag is-info is-light">text</span>.
+        This way the game can work with ID's only and fill in the right text depending on the language used. For example, <span class="tag is-info is-light">Press the A Button</span> and its french counterpart
+        <span class="tag is-info is-light">Appuyez sur le bouton A</span> both have ID <span class="tag is-success is-light">07E1</span>.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Finding the right message
+    </p>
+    <p>
+        If you know the ID of the message you want to change you can simply fill in the <span class="tag is-info is-light">MSG ID</span> field. If it's a valid ID the corresponding text will appear which you can then edit.
+        If you do not know the ID you can simply write the text you're looking for in the <span class="tag is-info is-light">Text</span> field. A drop-down will appear with some suggestions.
+        By clicking on a suggestion the ID will be automatically filled in.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Language
+    </p>
+    <p>
+        The language of the text field can be changed. This does not have an effect on the generated code but can help with searching for the right text/ID.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Generating the code
+    </p>
+    <p>
+        You can control the amount of messages you want to modify by pressing the <span class="tag is-success is-light">+</span> and <span class="tag is-danger is-light">-</span> buttons.
+        Once done simply press <span class="tag is-info is-light">Start</span> to generate the code and <span class="tag is-info is-light">Copy</span> to copy the code to your clipboard.
+    </p>
+    <hr class="hr" style="margin-bottom: 0;">
+    <p class="is-size-4 has-text-weight-bold ">
+        Cheat sheet
+    </p>
+    <p>
+        You may notice that some messages contain weird character sequences. These are called <span class="tag is-info is-light">Escape Sequences</span> and they allow you to modify the text in different ways.
+        For example, looking at ID <span class="tag is-success is-light">1777</span> we see the corresponding text is <span class="tag is-info is-light">H{001A080200110000} Worldwide Top 10</span>.
+        Removing the <span class="tag is-info is-light">H{}</span> and everything in between will remove the track name in front of <span class="tag is-info is-light">Worldwide Top 10</span>.
+        This tells us that the game replaces that particular sequance with the relevant track.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Colours & Font size
+    </p>
+    <p>
+        Both the colour and font size modifier work the same way: They modify all text that follows. <span class="tag is-info is-light">${RED3}Mario${GREEN}Luigi</span> will thus make the game show
+        <span class="tag is-info is-light"><span style="color:red;">Mario</span><span style="color:green;">Luigi</span></span>.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Unicode
+    </p>
+    <p>
+        Only a limited amount of Unicode characters are supported. <a href="http://wiki.tockdom.com/wiki/BMG_(File_Format)/0x1A_Escape_Sequences">Here</a> is a list of characters the game uses.
+        It's possible however that the game supports more characters than shown there.
+    </p>
+    <p class="is-size-5 has-text-weight-semibold">
+        Hex
+    </p>
+    <p>
+        You can insert literal hex strings using the <span class="tag is-info is-light">H{}</span> syntax. I would only recommend using this if you understand how escape sequences work and know what you're doing.
+        For more info on escape sequences check <a href="http://wiki.tockdom.com/wiki/BMG_(File_Format)#0x1A_Escape_Sequences">this page.</a>
+    </p>
+</div>

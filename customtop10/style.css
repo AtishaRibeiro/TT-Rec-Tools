@@ -1,0 +1,56 @@
+body {
+    text-align: center;
+    height: 100%;
+}
+
+.tabs-button {
+    background-color: white;
+}
+
+#watermark {
+    position: fixed;
+    bottom: 5px;
+    right: 10px;
+}
+li {
+    width:6em;
+}
+#main-table td{
+    vertical-align: middle;
+}
+
+.top-select {
+     width: 10em;
+}
+
+.time-field {
+    width: 6em;
+}
+
+.country-select {
+    width: 10em;
+}
+
+#rankings-title {
+    margin-bottom: 1em;
+}
+
+.flag-column{
+    /* margin-right: 0.5em; */
+    width: 10px;
+}
+
+.player-field {
+    width: 10em;
+}
+
+.position {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.label-span {
+    display: block;
+    width: 10em;
+    max-width: 10em;
+}

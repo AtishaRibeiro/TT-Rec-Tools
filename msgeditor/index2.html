@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>MSG Editor</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
         <script src="../navbar/init_nav.js"></script>
         <script src="page_functionality.js"></script>
@@ -21,7 +22,6 @@
             }
             #msg_table {
                 overflow: auto;
-                /*overflow-y: scroll;*/
                 display: block;
                 height: 26em;
                 padding-right: 0;
@@ -70,6 +70,17 @@
             li {
                 width:6em;
             }
+            #cheat-sheet-header {
+                cursor: pointer;
+            }
+            .cheat-arrow {
+                -moz-transition: transform 0.5s;
+                -webkit-transition: transform 0.5s;
+                transition: transform 0.5s;
+            }
+            .flip { 
+                transform: rotate(-180deg);
+            }
         </style>
     </head>
     <body>
@@ -81,84 +92,107 @@
                 <div class="column">
                     <div id="tabs" class="tabs is-toggle is-centered" style="margin-bottom:5px;">
                         <ul>
-                          <li class="is-active">
-                            <a><span>PAL</span></a>
-                          </li>
-                          <li>
-                            <a><span>NTSC-U</span></a>
-                          </li>
-                          <li>
-                            <a><span>NTSC-J</span></a>
-                          </li>
-                          <li>
-                            <a><span>NTSC-K</span></a>
-                          </li>
+                            <li id="PAL_tab" class="is-active">
+                              <a class="tabs-button"><span>PAL</span></a>
+                            </li>
+                            <li id="NTSC-U_tab">
+                              <a class="tabs-button"><span>NTSC-U</span></a>
+                            </li>
+                            <li id="NTSC-J_tab">
+                              <a class="tabs-button"><span>NTSC-J</span></a>
+                            </li>
+                            <li id="NTSC-K_tab">
+                              <a class="tabs-button"><span>NTSC-K</span></a>
+                            </li>
                         </ul>
                     </div>
                     <div class="select">
                         <select id="language_select">
                         </select>
-                      </div>
+                    </div>
                 </div>
             </div>
 
             <div class="columns is-centered">
-                <div class="column is-4">
-                    <div class="box" style="height:32.5em;">
-                        <div style="position:absolute">
-                            <span id="info-butt" class="icon has-text-info" style="cursor:pointer">
-                                <i class="fas fa-lg fa-info-circle"></i>
-                            </span>
-                        </div>
-                        
-                        <div >
-                        <p><b>MISC</b>
-                        <br><span class="code">\n</span> - new line
-                        <br><span class="code">${PLAYER}</span> - current player name
-                        </p>
-                        <p><b>COLOURS</b>
-                        <br>
-                        <div class="columns is-centered">
-                            <div class="column is-narrow" style="padding-bottom:0;">
-                                <table id="colour_table" class="table is-bordered is-centered">
-                                    <tbody>
-                                        <tr> <td style="color:white;text-shadow: 1px 1px black;">${WHITE}</td> <td style="color:#ff5454;">${RED2}</td> <td style="color: #ffe600">${YELLOW3}</td> <td style="color:#ff5100">${ORANGE4}</td></tr>
-                                        <tr> <td style="color:grey;">${GREY}</td> <td style="color: red">${RED3}</td> <td style="color: #ffc800">${ORANGE1}</td> <td style="color:#66c2ff">${BLUE1}</td></tr>
-                                        <tr> <td>${TRANSP}</td> <td style="color:yellow">${YELLOW1}</td> <td style="color:#ffa600">${ORANGE2}</td> <td style="color:#0069fc">${BLUE2}</td></tr>
-                                        <tr> <td style="color:#ff7575;">${RED1}</td> <td style="color: #fff200">${YELLOW2}</td> <td style="color:#ff7700">${ORANGE3}</td> <td style="color:#1ad937">${GREEN}</td></tr>
-                                    </tbody>
-                                </table>
+                <div id="cheat-col" class="column is-10">
+                    <article class="message is-warning">
+                        <div id="cheat-sheet-header" class="message-header columns is-centered" style="padding:0;margin:0;">
+                            <div class="column">
+                                <div class="cheat-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="column">
+                                Cheat Sheet
+                            </div>
+                            <div class="column">
+                                <div class="cheat-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
                             </div>
                         </div>
-                        
-                        </p>
-                        <p><b>FONT SIZE</b>
-                        <br><span class="code">F{x}</span> - x denotes the font size in percentage
-                        <br>0 being the smallest value and 255 the largest
-                        </p>
-                        <p><b>UNICODE</b>
-                        <br><span class="code">U{xxxxxxxx}</span> - Unicode character U+xxxxxxxx
-                        <br><span class="code">U{xxxx}</span> - Unicode character U+xxxx
-
-                        </p>
-                        <p><b>HEX</b>
-                        <br><span class="code">H{x}</span> - x is a hexadecimal string and can have any length 
-                        </p>
+                        <div id="cheat-sheet" class="message-body columns is-gapless" style="display:none;">
+                                <div style="position:absolute">
+                                    <span id="info-butt" class="icon has-text-info" style="cursor:pointer">
+                                        <i class="fas fa-lg fa-info-circle"></i>
+                                    </span>
+                                </div>
+                                <div class="column">
+                                    <p><b>MISC</b>
+                                        <br><span class="code">\n</span> - new line
+                                        <br><span class="code">${PLAYER}</span> - current player name
+                                    </p>
+                                    <p><b>HEX</b>
+                                        <br><span class="code">H{x}</span> - x is a hexadecimal string and can have any length 
+                                    </p>
+                                </div>
+                                <div class="column">
+                                    <p><b>COLOURS</b>
+                                        <br>
+                                        <div class="columns is-centered">
+                                            <div class="column is-narrow" style="padding-bottom:0;margin:0;">
+                                                <table id="colour_table" class="table is-bordered is-centered">
+                                                    <tbody>
+                                                        <tr> <td style="color:white;text-shadow: 1px 1px black;">${WHITE}</td> <td style="color:#ff5454;">${RED2}</td> <td style="color: #ffe600">${YELLOW3}</td> <td style="color:#ff5100">${ORANGE4}</td></tr>
+                                                        <tr> <td style="color:grey;">${GREY}</td> <td style="color: red">${RED3}</td> <td style="color: #ffc800">${ORANGE1}</td> <td style="color:#66c2ff">${BLUE1}</td></tr>
+                                                        <tr> <td>${TRANSP}</td> <td style="color:yellow">${YELLOW1}</td> <td style="color:#ffa600">${ORANGE2}</td> <td style="color:#0069fc">${BLUE2}</td></tr>
+                                                        <tr> <td style="color:#ff7575;">${RED1}</td> <td style="color: #fff200">${YELLOW2}</td> <td style="color:#ff7700">${ORANGE3}</td> <td style="color:#1ad937">${GREEN}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </p>
+                                </div>
+                                <div class="column">
+                                    <p><b>FONT SIZE</b>
+                                    <br><span class="code">F{x}</span> - x denotes the font size in percentage
+                                    <br>0 being the smallest value and 255 the largest
+                                    </p>
+                                    <p><b>UNICODE</b>
+                                    <br><span class="code">U{xxxxxxxx}</span> - Unicode character U+xxxxxxxx
+                                    <br><span class="code">U{xxxx}</span> - Unicode character U+xxxx
+                                    </p>
+                                </div>
                         </div>
-                    </div>
+                    </article>
+                    
+                    
                 </div>
-                <div class="column is-5">
+            </div>
+
+            <div class="columns is-centered">
+                <div class="column is-7">
                     <div class="box" style="height:32.5em;">
                         <div class="table-container">
-                            <table class="is-fullwidth">
-                                <tbody id="msg_table" style="width: 108%;">
+                            <table style="width: 100%;">
+                                <tbody id="msg_table">
                                     <tr style="display:block;">
-                                        <td style="padding:0; padding-right:5px;width:20%;">
+                                        <td style="padding:0; padding-right:5px;width:15%;">
                                             <div class="autocomplete" style="padding:0;">
                                                 <input id="id_input_0" class="input has-text-centered" type="text" autocomplete="on" placeholder="MSG ID" maxlength="4">
                                             </div>
                                         </td>
-                                        <td style="padding:0;width:80%;padding-right:5px;">
+                                        <td style="padding:0;width:85%;padding-right:5px;">
                                             <div class="autocomplete" style="width:100%;">
                                                 <input id="msg_input_0" class="input" type="text" placeholder="Text">
                                             </div>
@@ -178,13 +212,8 @@
                         <button id="copy_butt" class="button is-warning has-text-weight-bold" style=width:45%>Copy</button>
                     </div>
                 </div>
-                <div class="column is-1">
             </div>
 
-        </div>
-        
-        <div id="watermark">
-            Made by WhatisLoaf
         </div>
         </section>
     </body>

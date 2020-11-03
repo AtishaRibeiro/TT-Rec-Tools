@@ -1,4 +1,37 @@
+CHEAT_VISIBLE = false;
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/" + "; SameSite=Strict";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
 document.addEventListener("DOMContentLoaded", function() {
+
+     // fetch iso cookie and set the right tab
+     var iso_cookie = getCookie("iso_region");
+     if (iso_cookie != "") {
+         document.querySelectorAll('#tabs li').forEach(function(tabObject) {tabObject.classList.remove('is-active');})
+         document.querySelector(`#${iso_cookie}_tab`).classList.add('is-active');
+         ISO_REG = iso_cookie;
+     }
 
     // include navigation bar
     var xhr= new XMLHttpRequest();
@@ -9,6 +42,19 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('nav-placeholder').innerHTML= this.responseText;
     };
     xhr.send();
+
+    // cheet sheet functionality (in jQuery)
+    $("#cheat-sheet-header").click(function(){
+        if (CHEAT_VISIBLE) {
+            $("#cheat-sheet").slideUp();
+            $(".cheat-arrow").toggleClass("flip");
+            CHEAT_VISIBLE = false;
+        } else {
+            $("#cheat-sheet").slideDown();
+            $(".cheat-arrow").toggleClass("flip");
+            CHEAT_VISIBLE = true;
+        }
+    });
 
     document.getElementById('remove_butt').enabled = false;
 
@@ -23,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
             tabSelector.forEach(function(tabObject2) {tabObject2.classList.remove('is-active');})
             tabObject.classList.add('is-active');
             update_iso(tabObject.querySelector("span").innerHTML);
+            setCookie("iso_region", ISO_REG, 1000); // cookie expires after 1000 days
         }
     });
 

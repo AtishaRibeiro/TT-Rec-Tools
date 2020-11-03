@@ -113,7 +113,7 @@ function is_hexadecimal(hex_string) {
 function get_msd_id(index) {
     var id = document.getElementById(`id_input_${index}`).value;
     // check if hexadecimal
-    if (!is_hexadecimal(id)) return null;
+    if (!is_hexadecimal(id) || id == "") return null;
     return pad(id, 4);
 }
 
