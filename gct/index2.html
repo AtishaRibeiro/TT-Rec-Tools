@@ -8,7 +8,7 @@
         <script src="../navbar/init_nav.js"></script>
         <style>
             body {
-                background-color: hsl(43, 100%, 90%);
+                background-color: hsl(254, 100%, 90%);
                 height: 100vh;
             }
             tr {
@@ -26,11 +26,6 @@
                 position: absolute;
                 width: max-content;
                 visibility: hidden;
-            }
-            #watermark {
-                position: fixed;
-                bottom: 5px;
-                right: 10px;
             }
             .top-padding {
                 padding-top: 5%;
@@ -198,8 +193,8 @@
                 var gct_b = document.getElementById('gct_b');
                 gct_b.onclick = create_gct;
                 // generate random bg color
-                BG_HUE = Math.random() * 360;
-                document.body.style.backgroundColor = `hsl(${BG_HUE}, 100%, 90%)`;
+                //BG_HUE = Math.random() * 360;
+                //document.body.style.backgroundColor = `hsl(${BG_HUE}, 100%, 90%)`;
             }
 
             document.addEventListener('DOMContentLoaded', () => {
