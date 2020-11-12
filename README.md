@@ -2,13 +2,15 @@
 # TT-Rec-Tools
 This site brings together several tools I've made regarding time trial recording for Mario Kart Wii.
 It is hosted on www.tt-rec.com using Netlify.
+
 Although not required in the MIT license, it's still greatly appreciated if you credit me (Atisha Ribeiro/WhatisLoaf) when using code present in this repository.
 
 
 ## Code Details
 
 Almost all the tools were written at different times and for different environments/sites so they do not all follow the same style/template. 
-The CSS framework used is Bulma. More info at bulma.io
+
+The CSS framework used is [Bulma](https://bulma.io).
 
 ## Credits
 
