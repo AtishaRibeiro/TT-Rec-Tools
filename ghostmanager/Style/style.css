@@ -2,12 +2,6 @@ body {
     height: 100vh;
 }
 
-#watermark {
-    position: fixed;
-    bottom: 5px;
-    right: 10px;
-}
-
 .highlight {
     border: 2px dashed #ccc;
     border-radius: 20px;
