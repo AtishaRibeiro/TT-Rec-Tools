@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (result) {
                 element.classList.remove("is-danger");
                 console.log(result);
-                element.value = `${result[0]}:${result[1]}.${result[2]}`;
+                element.value = `${pad(result[0], 10)}:${pad(result[1], 10)}.${pad(result[2], 10)}`;
             } else {
                 element.classList.add("is-danger");
             }

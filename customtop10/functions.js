@@ -196,14 +196,10 @@ function extract_time_values(time) {
     if (!(/^([0-9]*\:[0-9]*\.[0-9]*)$/.test(time))) return false;
     var min, sec, mil;
     var first_split = time.split(':');
-    min = first_split[0];
+    min = parseInt(first_split[0]);
     var second_split = first_split[1].split('.');
-    sec = second_split[0];
-    mil = second_split[1];
-
-    min = parseInt(pad(min, 1, 10));
-    sec = parseInt(pad(sec, 2, 10));
-    mil = parseInt(pad(mil, 3, 10));
+    sec = parseInt(second_split[0]);
+    mil = parseInt(second_split[1]);
 
     // cap seconds field at 59 seconds
     sec = sec > 59 ? 59 : sec;

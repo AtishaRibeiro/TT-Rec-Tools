@@ -132,6 +132,12 @@ var LANGUAGES = {
     "NTSC-J": ["Japanese"],
     "NTSC-K": ["Korean"]
 };
+var MSG_MAPPING = {
+    "PAL": ["MSG_E", "MSG_F", "MSG_G", "MSG_I", "MSG_S"],
+    "NTSC-U": ["MSG_U", "MSG_M", "MSG_Q"],
+    "NTSC-J": ["MSG_J"],
+    "NTSC-K": ["MSG_K"]
+}
 var MSG_ID = "MSG_E";
 
 function update_iso(iso) {
@@ -148,46 +154,7 @@ function update_iso(iso) {
 }
 
 function update_language(language_index) {
-    switch (ISO_REG) {
-        case "PAL":
-            switch (language_index) {
-                case 0:
-                    MSG_ID = "MSG_E";
-                    break;
-                case 1:
-                    MSG_ID = "MSG_F";
-                    break;
-                case 2:
-                    MSG_ID = "MSG_G";
-                    break;
-                case 3:
-                    MSG_ID = "MSG_I";
-                    break;
-                case 4:
-                    MSG_ID = "MSG_S";
-                    break;
-            }
-            break;
-        case "NTSC-U":
-            switch (language_index) {
-                case 0:
-                    MSG_ID = "MSG_U";
-                    break;
-                case 1:
-                    MSG_ID = "MSG_M";
-                    break;
-                case 2:
-                    MSG_ID = "MSG_Q";
-                    break;
-            }
-            break;
-        case "NTSC-J":
-            MSG_ID = "MSG_J";
-            break;
-        case "NTSC-K":
-            MSG_ID = "MSG_K";
-            break;
-    }
+    MSG_ID = MSG_MAPPING[language_index];
     var table = document.getElementById('msg_table');
     for (var i = 0; i < table.rows.length; i++) {
         autocomplete(document.getElementById(`msg_input_${i}`), MSG_ID, true);
