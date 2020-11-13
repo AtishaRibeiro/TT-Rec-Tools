@@ -31,7 +31,10 @@ document.addEventListener("DOMContentLoaded", function() {
          document.querySelectorAll('#tabs li').forEach(function(tabObject) {tabObject.classList.remove('is-active');})
          document.querySelector(`#${iso_cookie}_tab`).classList.add('is-active');
          ISO_REG = iso_cookie;
+         update_language(0);
      }
+
+     update_iso(ISO_REG);
 
     // include navigation bar
     var xhr= new XMLHttpRequest();
@@ -57,9 +60,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById('remove_butt').enabled = false;
-
-    update_iso("PAL");
-    autocomplete(document.getElementById(`id_input_0`), "MSG_E", false);
 
     const tabSelector = document.querySelectorAll('#tabs li');
     tabSelector.forEach(function(tabObject) {
