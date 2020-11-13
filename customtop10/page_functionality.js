@@ -85,10 +85,13 @@ document.addEventListener("DOMContentLoaded", function() {
         var locs;
         if (selected_value == "Worldwide") {
             locs = ['Worldwide'];
+            GLOBE_REG = "ww";
         } else if (selected_value == "Regional") {
             locs = ["Europe", "North America", "Americas", "Latin America", "Asia", "Oceania"];
+            GLOBE_REG = "reg";
         } else {
             locs = get_country_names().sort();
+            GLOBE_REG = "cntr";
         }
         var options = '';
         for (loc of locs) {
