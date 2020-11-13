@@ -140,6 +140,7 @@ function top_10_code() {
         minutes = pad(minutes, 2);
         seconds = pad(seconds, 2);
         milliseconds = pad(milliseconds, 4);
+        console.log([minutes, seconds, milliseconds])
         country = pad(country, 2);
         wheel = pad(wheel ? 0 : 1, 2);
         
@@ -201,12 +202,12 @@ function extract_time_values(time) {
     sec = second_split[0];
     mil = second_split[1];
 
-    min = pad(min, 1, 10);
-    sec = pad(sec, 2, 10);
-    mil = pad(mil, 3, 10);
+    min = parseInt(pad(min, 1, 10));
+    sec = parseInt(pad(sec, 2, 10));
+    mil = parseInt(pad(mil, 3, 10));
 
     // cap seconds field at 59 seconds
-    sec = parseInt(sec) > 59 ? "59" : sec;
+    sec = sec > 59 ? 59 : sec;
 
     return [min, sec, mil];
 }
@@ -232,7 +233,7 @@ function get_entry_count() {
         var result = extract_time_values(time);
         if (result) {
             var [minutes, seconds, milliseconds] = result;
-            if (name == "Player" && minutes == "0" && seconds == "00" && milliseconds == "000") continue;
+            if (name == "Player" && minutes == 0 && seconds == 0 && milliseconds == 0) continue;
         }
         return i + 1;
     }
