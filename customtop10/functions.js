@@ -140,7 +140,6 @@ function top_10_code() {
         minutes = pad(minutes, 2);
         seconds = pad(seconds, 2);
         milliseconds = pad(milliseconds, 4);
-        console.log([minutes, seconds, milliseconds])
         country = pad(country, 2);
         wheel = pad(wheel ? 0 : 1, 2);
         
