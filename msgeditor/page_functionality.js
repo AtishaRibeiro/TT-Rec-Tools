@@ -137,7 +137,7 @@ var MSG_MAPPING = {
     "NTSC-U": ["MSG_U", "MSG_M", "MSG_Q"],
     "NTSC-J": ["MSG_J"],
     "NTSC-K": ["MSG_K"]
-}
+};
 var MSG_ID = "MSG_E";
 
 function update_iso(iso) {
@@ -154,7 +154,7 @@ function update_iso(iso) {
 }
 
 function update_language(language_index) {
-    MSG_ID = MSG_MAPPING[language_index];
+    MSG_ID = MSG_MAPPING[ISO_REG][language_index];
     var table = document.getElementById('msg_table');
     for (var i = 0; i < table.rows.length; i++) {
         autocomplete(document.getElementById(`msg_input_${i}`), MSG_ID, true);
