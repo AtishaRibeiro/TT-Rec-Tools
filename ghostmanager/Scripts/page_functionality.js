@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", function() {
     rksysDropArea.addEventListener('drop', handleRksysDrop, false);
 
     function handleRksysDrop(e) {
+        rksysFileInput.files = e.dataTransfer.files
         rksysFileInput.onchange();
     }
 
