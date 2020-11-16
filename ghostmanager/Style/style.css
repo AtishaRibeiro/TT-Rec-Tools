@@ -8,6 +8,11 @@ body {
     border-color: black;
 }
 
+.no-file {
+    background-color: #ffbebe;
+    color: #be0808;
+}
+
 .columns {
     text-align: center;
 }

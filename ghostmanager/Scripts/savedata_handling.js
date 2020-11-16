@@ -203,6 +203,7 @@ function read_rksys_file(file_name_obj, files) {
         const arrayBuffer = this.result;
         RKSYS = new Uint8Array(arrayBuffer);   
         if (String.fromCharCode.apply(null, RKSYS.slice(0, 4)) == "RKSD") {
+            file_name_obj.classList.remove("no-file");
             file_name_obj.textContent = files[0].name;
 
             for (var i = 0; i < 4; i++) { // check for valid licenses
@@ -220,6 +221,7 @@ function read_rksys_file(file_name_obj, files) {
             update_table([0, 1, 2, 3], IMPORTING);
         } else {
             RKSYS = {};
+            file_name_obj.classList.add("no-file");
             file_name_obj.textContent = "No file uploaded";
         }
     };
