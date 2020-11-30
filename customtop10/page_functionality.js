@@ -144,11 +144,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const position_tds = document.querySelectorAll(".position");
     position_tds.forEach(function(element) {
+        var index = parseInt(element.id.split('_')[1]);
+        var rows = document.querySelector("#main-table tbody").rows;
+
         element.addEventListener('click', function() {
-            var index = parseInt(element.id.split('_')[1]);
-            var rows = document.querySelector("#main-table tbody").rows;
             if (HIGHLIGHT["index"] != -1) { // remove highlight
-                var rows = document.querySelector("#main-table tbody").rows;
                 rows[HIGHLIGHT["index"]].style.backgroundColor = HIGHLIGHT["base_colour"];
             }
             if (index != HIGHLIGHT["index"]) { // check if clicked on a different row
@@ -159,7 +159,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 HIGHLIGHT["index"] = -1;
             }
         });
-        
+
+        element.addEventListener('mouseenter', function() {
+            rows[index].classList.add("light-yellow");
+        });
+
+        element.addEventListener('mouseleave', function() {
+            rows[index].classList.remove("light-yellow");
+        });
     });
 
     const rkgFileInputs = document.querySelectorAll('.rkg-input input[type=file]');
@@ -186,9 +193,10 @@ document.addEventListener("DOMContentLoaded", function() {
             var result = extract_time_values(element.value);
             if (result) {
                 element.classList.remove("is-danger");
-                console.log(result);
                 element.value = `${pad(result[0], 1, 10)}:${pad(result[1], 2, 10)}.${pad(result[2], 3, 10)}`;
+                highlight_decreasing_times();
             } else {
+                element.classList.remove("light-yellow");
                 element.classList.add("is-danger");
             }
         }
@@ -313,5 +321,24 @@ function set_new_entries(start_pos, entries) {
 
         // set flag
         set_flag(current_pos, country_data[0]);
+    }
+    highlight_decreasing_times();
+}
+
+function highlight_decreasing_times() {
+    // highlights times that are smaller than the entry above them to warn the user
+    var time_list = extract_time_values(document.getElementById('time_0').value);
+    var previous = time_list[0] * 6000 + time_list[1] * 1000 + time_list[2];
+    var time_element;
+    for (var i = 1; i < 10; i++) {
+        time_element = document.getElementById(`time_${i}`)
+        time_list = extract_time_values(time_element.value);
+        current = time_list[0] * 6000 + time_list[1] * 1000 + time_list[2];
+        if (current < previous) {
+            time_element.classList.add("light-yellow");
+        } else {
+            time_element.classList.remove("light-yellow");
+        }
+        previous = current;
     }
 }

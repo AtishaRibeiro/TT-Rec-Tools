@@ -7,14 +7,10 @@ body {
     background-color: white;
 }
 
-#watermark {
-    position: fixed;
-    bottom: 5px;
-    right: 10px;
-}
 li {
     width:6em;
 }
+
 #main-table td{
     vertical-align: middle;
 }
@@ -47,6 +43,10 @@ li {
 .position {
     cursor: pointer;
     font-weight: bold;
+}
+
+#main-table .light-yellow {
+    background-color: #ffeb94;
 }
 
 .label-span {
