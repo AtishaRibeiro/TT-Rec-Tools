@@ -18,4 +18,27 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('howto-content').innerHTML= this.responseText;
     };
     xhr.send();
+
+    if (page == 'recdolphin') {
+        var menu_r= new XMLHttpRequest();
+        menu_r.open('GET', 'menudolphin.html', true);
+        menu_r.onreadystatechange= function() {
+            if (this.readyState!==4) return;
+            if (this.status!==200) return;
+            document.getElementById('menu').innerHTML= this.responseText;
+
+            const chapters = document.querySelectorAll(".menu li");
+            chapters.forEach(function(chapter) {
+                chapter.onclick = () => {
+                    var chapter_id = `c_${chapter.id.split('_')[1]}`;
+                    document.getElementById(chapter_id).scrollIntoView();
+                }
+            });
+        };
+        menu_r.send();
+    } else {
+        document.getElementById('menu').innerHTML = '';
+    }
+
+    
 });
