@@ -59,9 +59,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
-    document.getElementById('result').innerHTML = "";
-    document.getElementById('id_input_0').innerHTML = "";
-    document.getElementById('msg_input_0').innerHTML = "";
+    document.getElementById('result').value = "";
+    document.getElementById('id_input_0').value = "";
+    document.getElementById('msg_input_0').value = "";
     document.getElementById('remove_butt').enabled = false;
 
     const tabSelector = document.querySelectorAll('#tabs li');
