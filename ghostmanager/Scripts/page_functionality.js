@@ -2,25 +2,11 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    function init_page() {
-        update_table([0, 1, 2, 3]);
-    }
+    // function init_page() {
+    //     update_table([0, 1, 2, 3]);
+    // }
 
-    init_page();
-
-    const tabSelector = document.querySelectorAll('#tabs li');
-    tabSelector.forEach(function(tabObject) {
-        tabObject.onclick = () => {
-            if (!DOWNLOADING_GHOSTS) { // don't allow tab switching when ghosts are being downloaded
-                var tab = tabObject.dataset.tab;
-          
-                tabSelector.forEach(function(tabObject2) {tabObject2.classList.remove('is-active');})
-                tabObject.classList.add('is-active');
-    
-                switch_mode(tab == 1);
-            }
-        }
-    })
+    //init_page();
 
     const rksysFileInput = document.querySelector('#rksys input[type=file]');
     rksysFileInput.onchange = () => {
@@ -30,20 +16,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    handle_input_event();
-    
-
-    const licenseButton = document.querySelectorAll('.rkg-button');
-    licenseButton.forEach(function(licenseButton) {
-        licenseButton.onclick = (button) => {
-            toggle_checkboxes(button.target);
-        };
-    })
-
-    const importButton = document.querySelector('#import-save-butt');
-    importButton.onclick = async () => {
-        await download();
+    const rkgFileInput = document.querySelector('#rkg-button input[type=file]');
+    rkgFileInput.onchange = () => {
+        if (rkgFileInput.files.length > 0) {
+            read_rkg_files(rkgFileInput.files);
+        }
     };
+
+    // const licenseButton = document.querySelectorAll('.rkg-button');
+    // licenseButton.forEach(function(licenseButton) {
+    //     licenseButton.onclick = (button) => {
+    //         toggle_checkboxes(button.target);
+    //     };
+    // })
+
+    // const importButton = document.querySelector('#import-save-butt');
+    // importButton.onclick = async () => {
+    //     await download();
+    // };
 
     // drag&drop functionality (rksys)
 
@@ -82,40 +72,6 @@ document.addEventListener("DOMContentLoaded", function() {
     rksysDropArea.classList.remove('highlight');
     }
 });
-
-function handle_input_event() {
-    const rkgFileInputs = document.querySelectorAll('.rkg-button input[type=file]');
-    rkgFileInputs.forEach(function(rkgFileInput) {
-        rkgFileInput.onchange = () => {
-            if (rkgFileInput.files.length > 0) {
-                read_rkg_files(rkgFileInput.files, parseInt(rkgFileInput.id[3]) - 1);
-            }
-        };
-    })
-}
-
-// switching from import to export mode and back
-
-function switch_mode(importing=true) {
-    if (importing != IMPORTING) {
-        IMPORTING = importing;
-        var big_button = document.getElementById('import-save-butt')
-        big_button.innerHTML = IMPORTING ? 'Import & Download' : 'Export & Download';
-
-        for (var i = 1; i <= 4; i++) {
-            var license_button = document.getElementById(`button${i}`);
-            if (IMPORTING) {
-                var input_text = `<input id="rkg${i}" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">`;
-                input_text += '<i class="fas fa-upload"></i>&nbsp; Upload RKG';
-                license_button.innerHTML = input_text;
-                handle_input_event();
-            } else {
-                license_button.innerHTML = "Select All";
-            }
-        }
-        update_table([0, 1, 2, 3], IMPORTING);
-    }
-}
 
 function toggle_checkboxes(license_button) {
     var license_index = parseInt(license_button.id.slice(license_button.id.length - 1));

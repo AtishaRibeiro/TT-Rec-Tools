@@ -19,7 +19,7 @@
         <section class="section">
         <div class="container">
             <div class="columns is-centered">
-                <div class="column is-5">
+                <div class="column is-7">
                     <div id="rksys" class="file is-fullwidth has-name is-boxed">
                         <label class="file-label">
                             <input id="rksys-input" class="file-input" type="file" name="resume">
@@ -44,59 +44,63 @@
                     </div>
                 </div> 
                 <div class="column is-2" id="mini-select">
-                    <div class="columns">
-                        <div class="column" id="mini-yellow">
+                    <div class="columns is-centered">
+                        <div class="column l1" id="mini-yellow">
+                            <i class="fas fa-ban fa-2x" style="color:var(--yellow-dark);"></i>
                         </div>
-                        <div class="column" id="mini-blue">
+                        <div class="column l2" id="mini-blue">
+                            <i class="fas fa-ban fa-2x" style="color:var(--blue-dark);"></i>
                         </div>
                     </div>
-                    <div class="columns">
-                        <div class="column" id="mini-red">
+                    <div class="columns is-centered">
+                        <div class="column l3" id="mini-red">
+                            <i class="fas fa-ban fa-2x" style="color:var(--red-dark);"></i>
                         </div>
-                        <div class="column" id="mini-green">
+                        <div class="column l4" id="mini-green">
+                            <i class="fas fa-ban fa-2x" style="color:var(--green-dark);"></i>
                         </div>
                     </div>
                 </div>
             </div>
             <div id="tab-content">
                 <div class="columns is-centered">
-                    <div class="column is-3 license-col main-column">
-                        <div id="ghost-import" class="license-div">
+                    <div class="column is-4 license-col main-column">
+                        <div id="ghost-import" class="license-div neutral">
                             <p class="t-header is-size-5 has-text-weight-bold">Import</p>
                             <div class="table-container">
                                 <table class="table is-fullwidth">
-                                    <tbody id="l1-t" class="import-t">
+                                    <tbody id="import-t">
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <button id="button1" class="button rkg-button is-fullwidth is-warning">
-                            <input id="rkg1" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
+                        <button id="rkg-button" class="button is-fullwidth">
+                            <input id="rkg" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
                             <i class="fas fa-upload"></i>
                             &nbsp; Upload RKG
                         </button>
                     </div>
-                    <div class="column is-2" id="mid-col">
+                    <div class="column is-1" id="mid-col">
                         <div id="top-arrow">
-                            <i class="fas fa-arrow-right fa-6x"></i>
+                            <i class="fas fa-caret-right fa-6x"></i>
                         </div>
                         <div>
-                            <i class="fas fa-arrow-right fa-6x"></i>
+                            <i class="fas fa-caret-right fa-6x"></i>
                         </div>
                     </div>
-                    <div class="column is-3 license-col main-column">
-                        <div id="license" class="license-div">
-                            <p class="t-header is-size-5 has-text-weight-bold">License 1</p>
+                    <div class="column is-4 license-col main-column">
+                        <div id="license" class="license-div neutral">
+                            <p class="t-header is-size-5 has-text-weight-bold">Personal Best</p>
                             <div class="table-container">
                                 <table class="table is-fullwidth">
-                                    <tbody id="pb-t" class="l2-t">
+                                    <tbody id="pb-t">
                                     </tbody>
                                 </table>
                             </div>
                             <p class="t-header is-size-5 has-text-weight-bold">Downloaded</p>
                             <div class="table-container">
                                 <table class="table is-fullwidth">
-                                    <tbody id="download-t" class="l2-t">
+                                    <tbody id="download-t">
                                     </tbody>
                                 </table>
                             </div>
@@ -105,7 +109,7 @@
                 </div>
                 <div class="columns is-centered">
                     <div class="column is-half">
-                        <button class="button is-fullwidth" id="import-save-butt">Import & Download</button>
+                        <button class="button is-fullwidth" id="import-save-butt">Download</button>
                     </div>
                 </div>
         </div>

@@ -1,3 +1,21 @@
+:root {
+    --yellow-main:  hsl(48, 100%, 67%);
+    --yellow-secondary: hsl(48, 100%, 50%);
+    --yellow-dark: hsl(48, 100%, 30%);
+    --blue-main:  hsl(204, 86%, 53%);
+    --blue-secondary: hsl(204, 86%, 40%);
+    --blue-dark: hsl(204, 86%, 30%);
+    --red-main: hsl(348, 100%, 61%);
+    --red-secondary: hsl(348, 100%, 44%);
+    --red-dark: hsl(348, 100%, 34%);
+    --green-main: hsl(141, 71%, 48%);
+    --green-secondary: hsl(141, 71%, 35%);
+    --green-dark: hsl(141, 71%, 25%);
+    --neutral-main: hsl(199, 31%, 78%);
+    --neutral-secondary: hsl(199, 31%, 60%);
+    --neutral-dark: hsl(199, 31%, 50%);
+  }
+
 body {
     height: 100vh;
 }
@@ -21,11 +39,11 @@ body {
     border-radius: 5px;
 }
 
-.rkg-button {
+#rkg-button {
     margin-top: 0.5rem;
 }
 
-.rkg-button, .rkg-button > * {
+#rkg-button, #rkg-button > * {
     cursor: pointer;
 }
 
@@ -42,6 +60,8 @@ tbody {
     overflow-y: scroll;
     display: block;
     scrollbar-width: thin;
+    background-color:var(--neutral-main) !important;
+    scrollbar-color: var(--neutral-dark) var(--neutral-secondary);
 }
 
 #pb-t {
@@ -72,50 +92,63 @@ tr {
 }
 
 #mini-select {
-    padding:2em;
-    padding-top: 2.2em;
+    padding-top: 1.7em;
 }
 
 #mini-select .column {
     border-radius: 5px;
-    height: 30px;
-    max-width: 50px;
+    height: 38px;
+    max-width: 80px;
     cursor: pointer;
+    padding-top:3px;
+}
+
+.mini-border {
+    border: solid;
 }
 
 #mini-yellow {
-    background-color: hsl(48, 100%, 67%);
+    
     margin-right: 8px !important;
     margin-bottom: 8px !important;
 }
 
 #mini-blue {
-    background-color: hsl(204, 86%, 53%);
+
     margin-left: 8px !important;
     margin-bottom: 8px !important;
 }
 
 #mini-red {
-    background-color: hsl(348, 100%, 61%);
+
     margin-right: 8px !important;
     margin-top: 8px !important;
 }
 
 #mini-green {
-    background-color: hsl(141, 71%, 48%);
+
     margin-left: 8px !important;
     margin-top: 8px !important;
 }
 
-#ghost-import {
-    background-color: hsl(48, 100%, 67%);
+.l1 {
+    background-color: var(--yellow-main);
 }
 
-#license {
-    background-color: hsl(204, 86%, 53%);
+.l2 {
+    background-color: var(--blue-main);
 }
 
-.main-column {
+.l3 {
+    background-color: var(--red-main);
+}
+
+.l4 {
+    background-color: var(--green-main);
+}
+
+.neutral {
+    background-color: var(--neutral-main);
 }
 
 #mid-col {
@@ -129,104 +162,108 @@ tr {
 /* scrollbar-color is firefox only for the time being*/
 
 .l1-t {
-    background-color: hsl(48, 100%, 67%) !important;
-    scrollbar-color: hsl(48, 100%, 30%) hsl(48, 100%, 50%);
+    background-color:var(--yellow-main) !important;
+    scrollbar-color: var(--yellow-dark) var(--yellow-secondary);
 }
 
 .l2-t {
-    background-color: hsl(204, 86%, 53%) !important;
-    scrollbar-color: hsl(204, 86%, 30%) hsl(204, 86%, 40%);
+    background-color:var(--blue-main) !important;
+    scrollbar-color: var(--blue-dark) var(--blue-secondary);
 }
 
 .l3-t {
-    background-color: hsl(348, 100%, 61%) !important;
-    scrollbar-color: hsl(348, 100%, 34%) hsl(348, 100%, 44%);
+    background-color:var(--red-main) !important;
+    scrollbar-color: var(--red-dark) var(--red-secondary);
 }
 
 .l4-t {
-    background-color: hsl(141, 71%, 48%) !important;
-    scrollbar-color: hsl(141, 71%, 25%) hsl(141, 71%, 35%);
-}
-
-.import-t {
-    background-color: hsl(230, 13%, 61%) !important;
-    scrollbar-color: hsl(229, 8%, 40%) hsl(230, 13%, 61%);
+    background-color:var(--green-main) !important;
+    scrollbar-color: var(--green-dark) var(--green-secondary);
 }
 
 /* webkit versions for chrome and other browsers*/
 
-#l1-t::-webkit-scrollbar {
+.l1-t::-webkit-scrollbar {
     width: 10px;
-    background: hsl(48, 100%, 50%);
+    background: var(--yellow-secondary);
 }
 
-#l1-t::-webkit-scrollbar-thumb {
-    background: hsl(48, 100%, 30%);
+.l1-t::-webkit-scrollbar-thumb {
+    background: var(--yellow-dark);
 }
 
-#l2-t::-webkit-scrollbar {
+.l2-t::-webkit-scrollbar {
     width: 10px;
-    background: hsl(204, 86%, 40%);
+    background: var(--blue-secondary);
 }
 
-#l2-t::-webkit-scrollbar-thumb {
-    background: hsl(204, 86%, 30%);
+.l2-t::-webkit-scrollbar-thumb {
+    background: var(--blue-dark);
 }
 
-#l3-t::-webkit-scrollbar {
+.l3-t::-webkit-scrollbar {
     width: 10px;
-    background: hsl(348, 100%, 44%);
+    background: var(--red-secondary);
 }
 
-#l3-t::-webkit-scrollbar-thumb {
-    background: hsl(348, 100%, 34%);
+.l3-t::-webkit-scrollbar-thumb {
+    background: var(--red-dark);
 }
 
-#l4-t::-webkit-scrollbar {
+.l4-t::-webkit-scrollbar {
     width: 10px;
-    background: hsl(141, 71%, 35%);
+    background: var(--green-secondary);
 }
 
-#l4-t::-webkit-scrollbar-thumb {
-    background: hsl(141, 71%, 25%);
+.l4-t::-webkit-scrollbar-thumb {
+    background: var(--green-dark);
 }
 
-#l1-t tr:nth-child(odd) {
-    background-color: hsl(48, 100%, 50%);
+#import-t::-webkit-scrollbar {
+    width: 10px;
+    background: var(--neutral-secondary);
 }
 
-#l1-t tr:nth-child(even) {
-    background-color: hsl(48, 100%, 67%);
+#import-t::-webkit-scrollbar-thumb {
+    background: var(--neutral-dark);
 }
 
-#l2-t tr:nth-child(odd) {
-    background-color: hsl(204, 86%, 40%);
+.l1-t tr:nth-child(odd) {
+    background-color: var(--yellow-secondary);
 }
 
-#l2-t tr:nth-child(even) {
-    background-color: hsl(204, 86%, 53%);
+.l1-t tr:nth-child(even) {
+    background-color: var(--yellow-main);
 }
 
-#l3-t tr:nth-child(odd) {
-    background-color: hsl(348, 100%, 44%);
+.l2-t tr:nth-child(odd) {
+    background-color: var(--blue-secondary);
 }
 
-#l3-t tr:nth-child(even) {
-    background-color: hsl(348, 100%, 61%);
+.l2-t tr:nth-child(even) {
+    background-color: var(--blue-main);
 }
 
-#l4-t tr:nth-child(odd) {
-    background-color: hsl(141, 71%, 35%);
+.l3-t tr:nth-child(odd) {
+    background-color: var(--red-secondary);
 }
 
-#l4-t tr:nth-child(even) {
-    background-color: hsl(141, 71%, 48%);
+.l3-t tr:nth-child(even) {
+    background-color: var(--red-main);
+}
+
+.l4-t tr:nth-child(odd) {
+    background-color: var(--green-secondary);
+}
+
+.l4-t tr:nth-child(even) {
+    background-color: var(--green-main);
 }
 
 #import-t tr:nth-child(odd) {
-    background-color: hsl(230, 13%, 61%);
+    background-color:  var(--neutral-secondary);
 }
 
 #import-t tr:nth-child(even) {
-    background-color: hsl(229, 8%, 40%);
+    background-color: var(--neutral-main);
 }
