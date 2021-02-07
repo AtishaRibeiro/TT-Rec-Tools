@@ -45,18 +45,18 @@
                 </div> 
                 <div class="column is-2" id="mini-select">
                     <div class="columns is-centered">
-                        <div class="column l1" id="mini-yellow">
+                        <div class="column l1 mini" id="mini-1">
                             <i class="fas fa-ban fa-2x" style="color:var(--yellow-dark);"></i>
                         </div>
-                        <div class="column l2" id="mini-blue">
+                        <div class="column l2 mini" id="mini-2">
                             <i class="fas fa-ban fa-2x" style="color:var(--blue-dark);"></i>
                         </div>
                     </div>
                     <div class="columns is-centered">
-                        <div class="column l3" id="mini-red">
+                        <div class="column l3 mini" id="mini-3">
                             <i class="fas fa-ban fa-2x" style="color:var(--red-dark);"></i>
                         </div>
-                        <div class="column l4" id="mini-green">
+                        <div class="column l4 mini" id="mini-4">
                             <i class="fas fa-ban fa-2x" style="color:var(--green-dark);"></i>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                                 </table>
                             </div>
                         </div>
-                        <button id="rkg-button" class="button is-fullwidth">
+                        <button id="rkg-button" class="button is-fullwidth neutral has-text-weight-bold">
                             <input id="rkg" class="file-input" type="file" name="resume" multiple="multiple" accept=".rkg">
                             <i class="fas fa-upload"></i>
                             &nbsp; Upload RKG
@@ -84,25 +84,38 @@
                         <div id="top-arrow">
                             <i class="fas fa-caret-right fa-6x"></i>
                         </div>
-                        <div>
-                            <i class="fas fa-caret-right fa-6x"></i>
-                        </div>
                     </div>
                     <div class="column is-4 license-col main-column">
-                        <div id="license" class="license-div neutral">
-                            <p class="t-header is-size-5 has-text-weight-bold">Personal Best</p>
+                        <div id="license" class="license-div">
+                            <div class="tabs is-fullwidth is-boxed has-text-weight-bold neutral-tabs">
+                                <ul>
+                                  <li class="is-active" id="pb">
+                                    <a>Personal Best</a>
+                                  </li>
+                                  <li id="download">
+                                      <a>Downloaded [0/32]</a>
+                                  </li>
+                                </ul>
+                            </div>
                             <div class="table-container">
                                 <table class="table is-fullwidth">
-                                    <tbody id="pb-t">
+                                    <tbody id="license-t" class="neutral">
                                     </tbody>
                                 </table>
                             </div>
-                            <p class="t-header is-size-5 has-text-weight-bold">Downloaded</p>
-                            <div class="table-container">
-                                <table class="table is-fullwidth">
-                                    <tbody id="download-t">
-                                    </tbody>
-                                </table>
+                        </div>
+                        <div class="columns">
+                            <div class="column">
+                                <button id="rkg-button" class="button is-fullwidth neutral has-text-weight-bold is-info" style="color: black;">
+                                    <i class="fas fa-file-export"></i>
+                                    &nbsp; Export
+                                </button>
+                            </div>
+                            <div class="column">
+                                <button id="rkg-button" class="button is-fullwidth has-text-weight-bold is-danger" style="color: black;">
+                                    <i class="fas fa-ban"></i>
+                                    &nbsp; Delete
+                                </button>
                             </div>
                         </div>
                     </div>

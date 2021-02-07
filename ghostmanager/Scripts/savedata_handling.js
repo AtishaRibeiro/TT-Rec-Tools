@@ -21,11 +21,13 @@ var TRACK_IDS = {
     0x1C: [23, 31], 0x1D: [22, 26], 0x1E: [19, 25], 0x1F: [16, 21]
 };
 
+var DOWNLOADING_GHOSTS = false;
 var IMPORTING = true; // false when exporting
 var RKSYS = [];
 var RKG = {};
 var GHOSTS_IMPORT = [];
 var GHOSTS_LICENSE = [null, null, null, null];
+var CURRENT_LICENSE = -1;
 
 var makeCRCTable = function(){
     var c;
@@ -109,35 +111,33 @@ function update_import_table() {
     tbody.parentNode.replaceChild(new_tbody, tbody);
 }
 
-function update_license_table(index) {
+function update_license_table(index, ghost_type) {
     if (index == -1) {
         return;
     }
-    var license_div = document.getElementById('license');
-    const class_regex = new RegExp(/neutral|l[1-4]/);
-    license_div.className = license_div.className.replace(class_regex, `l${index+1}`);
+    var license_div = document.querySelector('#license .tabs');
+    const class_regex = new RegExp(/neutral-tabs|l[1-4]-tabs/);
+    license_div.className = license_div.className.replace(class_regex, `l${index+1}-tabs`);
 
-    for (ghost_type of ['pb', 'download']) {
-        var tbody = document.getElementById(`${ghost_type}-t`);
-        var new_tbody = document.createElement('tbody');
-        new_tbody.id = tbody.id;
-        new_tbody.classList.add(`l${index+1}-t`);
-        // sort ghosts based on their track index
-        GHOSTS_LICENSE[index][ghost_type].sort(function(a, b) {
-            var keyA = a["track_index"],
-                keyB = b["track_index"];
-            if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
-            return 0;
-        });
-        //GHOSTS_EXPORT = ghosts; // update to sorted list (important for checkboxes)
-        new_tbody = ghosts_to_table(new_tbody, GHOSTS_LICENSE[index][ghost_type], false);
-        tbody.parentNode.replaceChild(new_tbody, tbody);
-    }
+    var tbody = document.getElementById('license-t');
+    var new_tbody = document.createElement('tbody');
+    new_tbody.id = tbody.id;
+    new_tbody.classList.add(`l${index+1}-t`);
+    // sort ghosts based on their track index
+    GHOSTS_LICENSE[index][ghost_type].sort(function(a, b) {
+        var keyA = a["track_index"],
+            keyB = b["track_index"];
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+    });
+    //GHOSTS_EXPORT = ghosts; // update to sorted list (important for checkboxes)
+    new_tbody = ghosts_to_table(new_tbody, GHOSTS_LICENSE[index][ghost_type], false);
+    tbody.parentNode.replaceChild(new_tbody, tbody);
 }
 
 function update_mini(highlight) {
-    var minis = document.querySelectorAll('#mini-select [id^=mini-]');
+    var minis = document.querySelectorAll('.mini');
     var id = 0;
     for (mini of minis) {
         mini.classList.remove('mini-border');
@@ -145,6 +145,17 @@ function update_mini(highlight) {
         id += 1;
     }
     minis[highlight].classList.add('mini-border');
+}
+
+function update_chosen_license(license_index, ghost_type) {
+    CURRENT_LICENSE = license_index;
+    if (GHOSTS_LICENSE[license_index] != null) {
+        update_license_table(license_index, ghost_type);
+        update_mini(license_index);
+
+        var download_tab = document.querySelector('#download a');
+        download_tab.innerHTML = `Downloaded [${GHOSTS_LICENSE[license_index]['download'].length}/32]`
+    }
 }
 
 function get_ghost_summary(rkg) {
@@ -224,9 +235,7 @@ function read_rksys_file(file_name_obj, files) {
                     GHOSTS_LICENSE[i] = null;
                 }
             }
-
-            update_mini(first_license);
-            update_license_table(first_license);
+            update_chosen_license(first_license, 'pb');
         } else {
             RKSYS = {};
             file_name_obj.classList.add("no-file");

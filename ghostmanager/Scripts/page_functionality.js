@@ -8,6 +8,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //init_page();
 
+    const tabSelector = document.querySelectorAll('.tabs li');
+    tabSelector.forEach(function(tabObject) {
+        tabObject.onclick = () => {
+            if (!DOWNLOADING_GHOSTS) { // don't allow tab switching when ghosts are being downloaded
+                tabSelector.forEach(function(tabObject2) {tabObject2.classList.remove('is-active');})
+                tabObject.classList.add('is-active');
+                update_chosen_license(CURRENT_LICENSE, tabObject.id);
+            }
+        }
+    })
+
     const rksysFileInput = document.querySelector('#rksys input[type=file]');
     rksysFileInput.onchange = () => {
         if (rksysFileInput.files.length > 0) {
@@ -34,6 +45,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // importButton.onclick = async () => {
     //     await download();
     // };
+
+    const miniButtons = document.querySelectorAll('.mini');
+    miniButtons.forEach(function(miniButton) {
+        miniButton.onclick = () => {
+            const index = parseInt(miniButton.id.split('-')[1]) - 1;
+            update_chosen_license(index, 'pb');
+        }
+    })
 
     // drag&drop functionality (rksys)
 

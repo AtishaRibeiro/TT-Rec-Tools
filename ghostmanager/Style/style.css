@@ -1,4 +1,5 @@
 :root {
+    --bulma-black: #4a4a4a;
     --yellow-main:  hsl(48, 100%, 67%);
     --yellow-secondary: hsl(48, 100%, 50%);
     --yellow-dark: hsl(48, 100%, 30%);
@@ -6,7 +7,7 @@
     --blue-secondary: hsl(204, 86%, 40%);
     --blue-dark: hsl(204, 86%, 30%);
     --red-main: hsl(348, 100%, 61%);
-    --red-secondary: hsl(348, 100%, 44%);
+    --red-secondary: hsl(348, 100%, 46%);
     --red-dark: hsl(348, 100%, 34%);
     --green-main: hsl(141, 71%, 48%);
     --green-secondary: hsl(141, 71%, 35%);
@@ -55,21 +56,75 @@ button, button > * {
     font-weight: bold;
 }
 
+.tabs {
+    margin-bottom: 0em !important;
+}
+
+.tabs ul {
+    border: none;
+}
+
+.tabs.is-boxed a {
+    background-color: var(--neutral-secondary);
+    border: none;
+}
+
+.tabs.is-boxed a:hover {
+    filter: brightness(120%);
+}
+
+.tabs.is-boxed li.is-active a {
+    background-color: var(--neutral-main);
+    color: var(--bulma-black);
+}
+
+.tabs.is-boxed.neutral-tabs a {
+    background-color: var(--neutral-secondary);
+}
+
+.tabs.is-boxed.neutral-tabs li.is-active a {
+    background-color: var(--neutral-main);
+}
+
+.tabs.is-boxed.l1-tabs a {
+    background-color: var(--yellow-secondary);
+}
+
+.tabs.is-boxed.l1-tabs li.is-active a {
+    background-color: var(--yellow-main);
+}
+
+.tabs.is-boxed.l2-tabs a {
+    background-color: var(--blue-secondary);
+}
+
+.tabs.is-boxed.l2-tabs li.is-active a {
+    background-color: var(--blue-main);
+}
+
+.tabs.is-boxed.l3-tabs a {
+    background-color: var(--red-secondary);
+}
+
+.tabs.is-boxed.l3-tabs li.is-active a {
+    background-color: var(--red-main);
+}
+
+.tabs.is-boxed.l4-tabs a {
+    background-color: var(--green-secondary);
+}
+
+.tabs.is-boxed.l4-tabs li.is-active a {
+    background-color: var(--green-main);
+}
+
 tbody {
     height: 30em;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: block;
     scrollbar-width: thin;
     background-color:var(--neutral-main) !important;
     scrollbar-color: var(--neutral-dark) var(--neutral-secondary);
-}
-
-#pb-t {
-    height: 15em;
-}
-
-#download-t {
-    height: 15em;
 }
 
 .table-container {
@@ -78,8 +133,8 @@ tbody {
 }
 
 .t-header {
-    padding-bottom: 10px;
-    padding-top: 5px;
+    padding-top: 0.2em;
+    padding-bottom: 0.3em;
 }
 
 tr {
@@ -107,26 +162,22 @@ tr {
     border: solid;
 }
 
-#mini-yellow {
-    
+#mini-1 {   
     margin-right: 8px !important;
     margin-bottom: 8px !important;
 }
 
-#mini-blue {
-
+#mini-2 {
     margin-left: 8px !important;
     margin-bottom: 8px !important;
 }
 
-#mini-red {
-
+#mini-3 {
     margin-right: 8px !important;
     margin-top: 8px !important;
 }
 
-#mini-green {
-
+#mini-4 {
     margin-left: 8px !important;
     margin-top: 8px !important;
 }
@@ -152,7 +203,7 @@ tr {
 }
 
 #mid-col {
-    padding-top: 100px;
+    padding-top: 220px;
 }
 
 #top-arrow {
@@ -228,42 +279,42 @@ tr {
     background: var(--neutral-dark);
 }
 
-.l1-t tr:nth-child(odd) {
+.l1-t tr:nth-child(even) {
     background-color: var(--yellow-secondary);
 }
 
-.l1-t tr:nth-child(even) {
+.l1-t tr:nth-child(odd) {
     background-color: var(--yellow-main);
 }
 
-.l2-t tr:nth-child(odd) {
+.l2-t tr:nth-child(even) {
     background-color: var(--blue-secondary);
 }
 
-.l2-t tr:nth-child(even) {
+.l2-t tr:nth-child(odd) {
     background-color: var(--blue-main);
 }
 
-.l3-t tr:nth-child(odd) {
+.l3-t tr:nth-child(even) {
     background-color: var(--red-secondary);
 }
 
-.l3-t tr:nth-child(even) {
+.l3-t tr:nth-child(odd) {
     background-color: var(--red-main);
 }
 
-.l4-t tr:nth-child(odd) {
+.l4-t tr:nth-child(even) {
     background-color: var(--green-secondary);
 }
 
-.l4-t tr:nth-child(even) {
+.l4-t tr:nth-child(odd) {
     background-color: var(--green-main);
 }
 
-#import-t tr:nth-child(odd) {
+#import-t tr:nth-child(even) {
     background-color:  var(--neutral-secondary);
 }
 
-#import-t tr:nth-child(even) {
+#import-t tr:nth-child(odd) {
     background-color: var(--neutral-main);
 }
