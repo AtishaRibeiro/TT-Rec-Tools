@@ -50,9 +50,22 @@ document.addEventListener("DOMContentLoaded", function() {
     miniButtons.forEach(function(miniButton) {
         miniButton.onclick = () => {
             const index = parseInt(miniButton.id.split('-')[1]) - 1;
-            update_chosen_license(index, 'pb');
+            const active_tab = document.querySelector('#license li.is-active');
+            update_chosen_license(index, active_tab.id);
         }
     })
+
+    const deleteButton = document.getElementById('delete-button');
+    deleteButton.onclick = () => {
+        const active_tab = document.querySelector('#license li.is-active');
+        delete_selected_ghosts(active_tab.id);
+    }
+
+    const exportButton = document.getElementById('export-button');
+    exportButton.onclick = () => {
+        const active_tab = document.querySelector('#license li.is-active');
+        zip_and_download(active_tab.id);
+    }
 
     // drag&drop functionality (rksys)
 
@@ -109,7 +122,7 @@ function toggle_checkboxes(license_button) {
 DOWNLOADING_GHOSTS = false;
 
 function set_export_feedback(turn_on) {
-    var button = document.getElementById('import-save-butt');
+    var button = document.getElementById('export-button');
     if (turn_on) {
         DOWNLOADING_GHOSTS = true;
         button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><p id="export_progress"></p>';

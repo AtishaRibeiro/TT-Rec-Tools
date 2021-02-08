@@ -41,11 +41,15 @@ body {
 }
 
 #rkg-button {
-    margin-top: 0.5rem;
+    margin-top: 0.5em;
 }
 
 #rkg-button, #rkg-button > * {
     cursor: pointer;
+}
+
+button {
+    margin-top: 0.5em;
 }
 
 button, button > * {

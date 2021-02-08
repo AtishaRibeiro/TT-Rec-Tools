@@ -59,8 +59,11 @@ function delete_ghost(license_index, ghost_index) {
 }
 
 function ghosts_to_table(tbody, ghosts, ghost_import) {
+    var row_index = 0;
     for (var ghost of ghosts) {
         var row_ref = tbody.insertRow();
+        row_ref.id = `${ghost_import ? 'import' : 'license'}-${row_index}`;
+        row_index += 1;
         // add track name
         var new_cell = row_ref.insertCell(0);
         new_cell.innerHTML = TRACK_NAMES[ghost["track_index"]];
@@ -148,13 +151,21 @@ function update_mini(highlight) {
 }
 
 function update_chosen_license(license_index, ghost_type) {
-    CURRENT_LICENSE = license_index;
     if (GHOSTS_LICENSE[license_index] != null) {
+        CURRENT_LICENSE = license_index;
         update_license_table(license_index, ghost_type);
         update_mini(license_index);
 
-        var download_tab = document.querySelector('#download a');
-        download_tab.innerHTML = `Downloaded [${GHOSTS_LICENSE[license_index]['download'].length}/32]`
+        var download_count = document.querySelector('#download span');
+        var nr_downloaded = GHOSTS_LICENSE[license_index]['download'].length;
+        // const nr_downloaded = 32 - GHOSTS_LICENSE[license_index]['download'].filter(x => x == null).length;
+        download_count.innerHTML = `${nr_downloaded}/32`;
+        download_count.classList.remove('is-danger', 'is-info');
+        if (nr_downloaded >= 32) {
+            download_count.classList.add('is-danger');
+        } else {
+            download_count.classList.add('is-info');
+        }
     }
 }
 
@@ -267,6 +278,17 @@ function find_ghosts(license_index) {
     }
 }
 
+function delete_selected_ghosts(ghost_type) {
+    var tbody = document.getElementById('license-t');
+    for (var j = tbody.rows.length - 1; j >= 0; j--) {
+        var row = tbody.rows[j];
+        if (row.cells[3].childNodes[0].checked) { // if ghost is slecected for deletion
+            GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].splice(j, 1);
+        }
+    }
+    update_chosen_license(CURRENT_LICENSE, ghost_type);
+}
+
 function decompress_rkg(rkg) {
     var result = DecodeAll(rkg);
     if (result.length = 0) { // if it was already decompressed
@@ -348,25 +370,28 @@ function import_rkgs() {
 
 async function make_staff_ghost(rkg) {
     // set to staff ghost
+    const needs_compressing = rkg[12] != 0x08;
     rkg[12] = 0x08; // set compressed flag
     rkg[13] = (rkg[13] & 0x03) | 0x98;
 
-    // get the input data length
-    var input_length_arr = rkg.slice(14, 16);
-    var dataview = new DataView(input_length_arr.buffer);
-    var input_length =  dataview.getInt16(0);
+    if (needs_compressing) {
+        // get the input data length
+        var input_length_arr = rkg.slice(14, 16);
+        var dataview = new DataView(input_length_arr.buffer);
+        var input_length =  dataview.getInt16(0);
 
-    // split into header and input data
-    var header = rkg.slice(0, 0x88);
-    var input_data = rkg.slice(0x88, 0x88 + input_length);
+        // split into header and input data
+        var header = rkg.slice(0, 0x88);
+        var input_data = rkg.slice(0x88, 0x88 + input_length);
 
-    input_data = await encodeAll(input_data);
-    var input_data_size = toBytesInt32(input_data.length);
+        input_data = await encodeAll(input_data);
+        var input_data_size = toBytesInt32(input_data.length);
 
-    rkg = new Uint8Array(header.length + input_data_size.length + input_data.length);
-    rkg.set(header);
-    rkg.set(input_data_size, header.length);
-    rkg.set(input_data, header.length + input_data_size.length);
+        rkg = new Uint8Array(header.length + input_data_size.length + input_data.length);
+        rkg.set(header);
+        rkg.set(input_data_size, header.length);
+        rkg.set(input_data, header.length + input_data_size.length);
+    }    
 
     // recalculate checksum
     var rkg_data = Array.from(rkg);
@@ -379,9 +404,10 @@ async function make_staff_ghost(rkg) {
     return rkg;
 }
 
-async function zip_and_download() {
-    var total_ghosts = document.querySelectorAll('input[type=checkbox]:checked').length;
+async function zip_and_download(ghost_type) {
+    var total_ghosts = document.querySelectorAll('#license-t input[type=checkbox]:checked').length;
     if (total_ghosts == 0) return;
+    if (CURRENT_LICENSE == -1) return;
 
     // change export button to give feedback of progress
     set_export_feedback(true);
@@ -390,24 +416,21 @@ async function zip_and_download() {
     var ghost_file;
     var file_name;
 
-    // handle all slected ghost files and compress them
+    // handle all selected ghost files and compress them
     var zip = new JSZip();
-    for (var i = 0; i < 4; i++) {
-        if (GHOSTS_EXPORT[i] == null) continue;
-        var tbody = document.getElementById(`l${i+1}_t`);
-        for (var j = 0; j < tbody.rows.length; j++) {
-            var row = tbody.rows[j];
-            if (row.cells[3].childNodes[0].checked) { // if ghost is slecected for download
-                update_progress(current_ghost + 1, total_ghosts);
-                var ghost = GHOSTS_EXPORT[i][j];
-                var encoded_ghost = await make_staff_ghost(ghost["rkg"]);
-                ghost_file = new Blob([encoded_ghost], {type: "application/octet-stream"});
-                var time = ghost["time"].replace(':', 'm').replace('.', 's');
-                file_name = `${TRACK_NAMES[ghost["track_index"]]}_${ghost["mii_name"]}_${time}.rkg`
-                zip.file(file_name, ghost_file);
-                await new Promise(r => setTimeout(r, 10));
-                current_ghost++;
-            }
+    var tbody = document.getElementById('license-t');
+    for (var j = 0; j < tbody.rows.length; j++) {
+        var row = tbody.rows[j];
+        if (row.cells[3].childNodes[0].checked) { // if ghost is slecected for download
+            update_progress(current_ghost + 1, total_ghosts);
+            var ghost = GHOSTS_EXPORT[i][j];
+            var encoded_ghost = await make_staff_ghost(ghost["rkg"]);
+            ghost_file = new Blob([encoded_ghost], {type: "application/octet-stream"});
+            var time = ghost["time"].replace(':', 'm').replace('.', 's');
+            file_name = `${TRACK_NAMES[ghost["track_index"]]}_${ghost["mii_name"]}_${time}.rkg`
+            zip.file(file_name, ghost_file);
+            await new Promise(r => setTimeout(r, 10));
+            current_ghost++;
         }
     }
 
