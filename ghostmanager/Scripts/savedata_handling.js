@@ -28,6 +28,7 @@ var RKG = {};
 var GHOSTS_IMPORT = [];
 var GHOSTS_LICENSE = [null, null, null, null];
 var CURRENT_LICENSE = -1;
+var GHOSTS_TO_BE_DELETED = [];
 
 var makeCRCTable = function(){
     var c;
@@ -169,13 +170,34 @@ function update_chosen_license(license_index, ghost_type) {
     }
 }
 
-function get_ghost_summary(rkg) {
+function remove_padding(rkg) {
+    // get the length of the rkg (without CRC) while assuming that it is not a CTGP rkg
+    //var compressed_length = rkg.slice(0x88, 0x8C);
+    var dataview = new DataView(rkg.buffer);
+    var rkg_length =  dataview.getInt32(0x88) + 0x90;
+
+    // figure out if it is a CTGP ghost by looking for the 'CKGD' ascii starting from the length we got
+    for (var i = rkg_length; i < rkg.length; i++) {
+        if (String.fromCharCode(rkg[i]) == 'C' && String.fromCharCode(rkg[i+1]) == 'K' && 
+            String.fromCharCode(rkg[i+2]) == 'G' && String.fromCharCode(rkg[i+3]) == 'D') {
+                rkg_length = i + 0x4;
+        }
+    }
+
+    return rkg.slice(0x0, rkg_length)
+}
+
+function get_ghost_summary(rkg, address) {
+    if ((rkg[12] & 0x08) == 0x08) { // if compressed
+        rkg = remove_padding(rkg);
+    }
+
     var track_id = rkg[0x7] >> 0x2;
     var track_index = TRACK_IDS[track_id][1];
 
-    var time_1 = rkg[4];
-    var time_2 = rkg[5];
-    var time_3 = rkg[6];
+    var time_1 = rkg[0x4];
+    var time_2 = rkg[0x5];
+    var time_3 = rkg[0x6];
     // extract the time
     var min = time_1 >> 0x1;
     var sec = ((time_1 & 0x1) << 0x6) | (time_2 >> 0x2);
@@ -196,7 +218,8 @@ function get_ghost_summary(rkg) {
         "track_index": track_index,
         "time": `${min}:${sec}.${mil}`,
         "mii_name": mii_name,
-        "rkg": rkg
+        "rkg": rkg,
+        "address": address
     };
 }
 
@@ -210,7 +233,7 @@ function read_rkg_files(files) {
             const arrayBuffer = this.result;
             var rkg = new Uint8Array(arrayBuffer);
             if (String.fromCharCode.apply(null, rkg.slice(0, 4)) == "RKGD") {
-                var ghost_summary = get_ghost_summary(rkg);
+                var ghost_summary = get_ghost_summary(rkg, null);
                 GHOSTS_IMPORT.push(ghost_summary);
             }
 
@@ -246,7 +269,8 @@ function read_rksys_file(file_name_obj, files) {
                     GHOSTS_LICENSE[i] = null;
                 }
             }
-            update_chosen_license(first_license, 'pb');
+            const active_tab = document.querySelector('#license li.is-active');
+            update_chosen_license(first_license, active_tab.id);
         } else {
             RKSYS = {};
             file_name_obj.classList.add("no-file");
@@ -256,9 +280,10 @@ function read_rksys_file(file_name_obj, files) {
 }
 
 function save_ghost(license_index, address, ghost_type) {
-    var rkg = RKSYS.slice(address, address + 0x2800);
+    // 0x2FFC instead of 0x2800 since we recalculate the CRC anyway
+    var rkg = RKSYS.slice(address, address + 0x27FC);
     if (String.fromCharCode.apply(null, rkg.slice(0, 4)) == "RKGD") {
-        var ghost = get_ghost_summary(rkg);
+        var ghost = get_ghost_summary(rkg, address);
         GHOSTS_LICENSE[license_index][ghost_type].push(ghost);
     }
 }
@@ -333,16 +358,28 @@ function handle_rkg(rkg) {
     return rkg;
 }
 
-function import_rkgs() {
+async function import_rkgs() {
     var ghost_files = RKSYS.slice(0x28000, 0x2BC000);
     var save_data = RKSYS.slice(0, 0x27FFC);
 
     for (var i = 0; i < 4; i++) {
-        if (GHOSTS_IMPORT[i] != null) {
+        if (GHOSTS_LICENSE[i] != null) {
             var license_ghosts_addr = 0xA5000 * i;
             var license_save_addr = 0x8 + (0x8CC0 * i);
+            // clear pb and download flags
+            for (var j = 0x4; j < 0xC; j++) {
+                save_data[license_save_addr + j] = 0x0;
+            }
+            const pb_fl_addr = license_save_addr + 0x4; // pb flags address
+            const dl_fl_addr = license_save_addr + 0x8; // download flags address
 
-            for (ghost of GHOSTS_IMPORT[i]) {
+            // delete the ghosts that have to be deleted (GHOSTS_TO_BE_DELETED)
+
+            // import pb's
+
+            // import downloaded ghosts
+
+            for (ghost of GHOSTS_LICENSE[i]['pb']) {
                 var track_nr = TRACK_IDS[ghost["track_id"]][0];
                 var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr;
 
@@ -354,8 +391,7 @@ function import_rkgs() {
                 
                 // adjust pb flag
                 var byte_nr = 3 - Math.floor(track_nr / 8);
-                var byte_addr = license_save_addr + 0x4 + byte_nr;
-                save_data[byte_addr] = save_data[byte_addr] | (1 << (track_nr % 8));
+                save_data[pb_fl_addr + byte_nr] = save_data[pb_fl_addr + byte_nr] | (1 << (track_nr % 8));
             }
         }
     }
@@ -369,14 +405,13 @@ function import_rkgs() {
 }
 
 async function make_staff_ghost(rkg) {
-    // set to staff ghost
-    const needs_compressing = rkg[12] != 0x08;
+    const needs_compressing = (rkg[12] & 0x08) != 0x08;
     rkg[12] = 0x08; // set compressed flag
-    rkg[13] = (rkg[13] & 0x03) | 0x98;
+    rkg[13] = (rkg[13] & 0x03) | 0x98; // set to staff ghost
 
     if (needs_compressing) {
         // get the input data length
-        var input_length_arr = rkg.slice(14, 16);
+        var input_length_arr = rkg.slice(0x0E, 0x10);
         var dataview = new DataView(input_length_arr.buffer);
         var input_length =  dataview.getInt16(0);
 
@@ -423,7 +458,7 @@ async function zip_and_download(ghost_type) {
         var row = tbody.rows[j];
         if (row.cells[3].childNodes[0].checked) { // if ghost is slecected for download
             update_progress(current_ghost + 1, total_ghosts);
-            var ghost = GHOSTS_EXPORT[i][j];
+            var ghost = GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j];
             var encoded_ghost = await make_staff_ghost(ghost["rkg"]);
             ghost_file = new Blob([encoded_ghost], {type: "application/octet-stream"});
             var time = ghost["time"].replace(':', 'm').replace('.', 's');
@@ -456,21 +491,4 @@ function create_file_download(file, filename) {
     a.click();
     // Remove anchor from body
     document.body.removeChild(a);
-}
-
-async function download() {
-    if (RKSYS.length != 0) {
-        if (IMPORTING) {
-            // check if there actually are any ghosts to be imported
-            var ghosts_present = false;
-            for (var i = 0; i < 4; i++) {
-                if (GHOSTS_IMPORT[i] != null && GHOSTS_IMPORT[i].length != 0) ghosts_present = true;
-            }
-            if (!ghosts_present) return;
-            
-            import_rkgs();
-        } else {
-            await zip_and_download();
-        }
-    }
 }

@@ -34,17 +34,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    // const licenseButton = document.querySelectorAll('.rkg-button');
-    // licenseButton.forEach(function(licenseButton) {
-    //     licenseButton.onclick = (button) => {
-    //         toggle_checkboxes(button.target);
-    //     };
-    // })
-
-    // const importButton = document.querySelector('#import-save-butt');
-    // importButton.onclick = async () => {
-    //     await download();
-    // };
+    const importButton = document.querySelector('#import-save-butt');
+    importButton.onclick = async () => {
+        await import_rkgs();
+    };
 
     const miniButtons = document.querySelectorAll('.mini');
     miniButtons.forEach(function(miniButton) {
@@ -62,9 +55,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     const exportButton = document.getElementById('export-button');
-    exportButton.onclick = () => {
+    exportButton.onclick = async () => {
         const active_tab = document.querySelector('#license li.is-active');
-        zip_and_download(active_tab.id);
+        await zip_and_download(active_tab.id);
     }
 
     // drag&drop functionality (rksys)
@@ -128,8 +121,8 @@ function set_export_feedback(turn_on) {
         button.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i><p id="export_progress"></p>';
         button.disabled = true;
     } else {
-        DOWNLOADING_GHOSTS = false;
-        button.innerHTML = 'Export & Download';
+        DOWNLOADING_GHOSTS = false; 
+        button.innerHTML = '<i class="fas fa-file-export"></i> &nbsp; Export';
         button.disabled = false;
     }
 }
