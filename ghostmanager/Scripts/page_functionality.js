@@ -2,12 +2,6 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
-    // function init_page() {
-    //     update_table([0, 1, 2, 3]);
-    // }
-
-    //init_page();
-
     const tabSelector = document.querySelectorAll('.tabs li');
     tabSelector.forEach(function(tabObject) {
         tabObject.onclick = () => {
@@ -34,9 +28,9 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     };
 
-    const importButton = document.querySelector('#import-save-butt');
-    importButton.onclick = async () => {
-        await import_rkgs();
+    const saveButton = document.querySelector('#import-save-butt');
+    saveButton.onclick = async () => {
+        await save_and_download_save();
     };
 
     const miniButtons = document.querySelectorAll('.mini');
@@ -57,7 +51,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const exportButton = document.getElementById('export-button');
     exportButton.onclick = async () => {
         const active_tab = document.querySelector('#license li.is-active');
-        await zip_and_download(active_tab.id);
+        await zip_and_download_ghosts(active_tab.id);
+    }
+
+    const importButton = document.getElementById('import-button');
+    importButton.onclick = () => {
+        const active_tab = document.querySelector('#license li.is-active');
+        import_ghosts(active_tab.id);
     }
 
     // drag&drop functionality (rksys)

@@ -210,8 +210,9 @@ tr {
     padding-top: 220px;
 }
 
-#top-arrow {
+#import-button {
     margin-bottom: 170px;
+    cursor: pointer;
 }
 
 /* scrollbar-color is firefox only for the time being*/

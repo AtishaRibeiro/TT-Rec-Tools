@@ -178,12 +178,12 @@ function remove_padding(rkg) {
     var rkg_length =  dataview.getInt32(0x88) + 0x90;
 
     // figure out if it is a CTGP ghost by looking for the 'CKGD' ascii starting from the length we got
-    for (var i = rkg_length; i < rkg.length; i++) {
-        if (String.fromCharCode(rkg[i]) == 'C' && String.fromCharCode(rkg[i+1]) == 'K' && 
-            String.fromCharCode(rkg[i+2]) == 'G' && String.fromCharCode(rkg[i+3]) == 'D') {
-                rkg_length = i + 0x4;
-        }
-    }
+    // for (var i = rkg_length; i < rkg.length; i++) {
+    //     if (String.fromCharCode(rkg[i]) == 'C' && String.fromCharCode(rkg[i+1]) == 'K' && 
+    //         String.fromCharCode(rkg[i+2]) == 'G' && String.fromCharCode(rkg[i+3]) == 'D') {
+    //             rkg_length = i + 0x4;
+    //     }
+    // }
 
     return rkg.slice(0x0, rkg_length)
 }
@@ -323,6 +323,30 @@ function delete_selected_ghosts(ghost_type) {
     update_chosen_license(CURRENT_LICENSE, ghost_type);
 }
 
+function import_ghosts(ghost_type) {
+    if (ghost_type == 'download') {
+        if (GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].length + GHOSTS_IMPORT.length <= 32) {
+            GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].push(...GHOSTS_IMPORT);
+        }
+    } else {
+        var track_id_ghosts = {};
+        var i = 0;
+        for (ghost of GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type]) {
+            track_id_ghosts[ghost['track_id']] = i;
+            i++;
+        }
+        for (ghost of GHOSTS_IMPORT) {
+            if (ghost['track_id'] in track_id_ghosts) {
+                GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][track_id_ghosts[ghost['track_id']]] = ghost;
+            } else {
+                GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].push(ghost);
+                track_id_ghosts[ghost['track_id']] = GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].length - 1;
+            }
+        }
+    }
+    update_chosen_license(CURRENT_LICENSE, ghost_type);
+}
+
 function decompress_rkg(rkg) {
     var result = DecodeAll(rkg);
     if (result.length = 0) { // if it was already decompressed
@@ -343,12 +367,12 @@ function toBytesInt32 (num) {
     return new Uint8Array(arr);
 }
 
-function handle_rkg(rkg) {
+function handle_ghost(rkg) {
     rkg = decompress_rkg(rkg); // decompresses the rkg and also removes the checksum at the end
 
     // set to personal best
-    rkg[12] = 0;
-    rkg[13] = (rkg[13] & 0x03) | 0x04;
+    rkg[0xC] = 0x0;
+    rkg[0xD] = (rkg[0xD] & 0x03) | 0x04;
 
     // recalculate checksum
     var rkg_data = Array.from(rkg);
@@ -367,10 +391,37 @@ function handle_rkg(rkg) {
     return rkg;
 }
 
-async function import_rkgs() {
+function handle_downloaded(rkg, index) {
+    rkg = decompress_rkg(rkg);
+
+    rkg[0xC] = 0x00;
+    var ghost_type;
+    if (index < 30) { // set to downloaded friend ghost
+        ghost_type = (0x7 + index) << 2
+    } else { // set to wr/cr ghost
+        ghost_type = index - 28 << 2;
+    }
+    rkg[0xD] = (rkg[0xD] & 0x03) | ghost_type;
+
+    var rkg_data = Array.from(rkg);
+
+    // extend so the ghost file is exactly 0x2800 bytes in length (including checksum)
+    for(var i = rkg_data.length; i < 0x27fc; i++){
+        rkg_data.push(0);
+    }
+
+    rkg_data = Uint8Array.from(rkg_data);
+    var checksum_array = toBytesInt32(crc32(rkg_data));
+    rkg = new Uint8Array(rkg_data.length + checksum_array.length);
+    rkg.set(rkg_data);
+    rkg.set(checksum_array, rkg_data.length);
+
+    return rkg;
+}
+
+async function save_and_download_save() {
     var ghost_files = RKSYS.slice(0x28000, 0x2BC000);
     var save_data = RKSYS.slice(0, 0x27FFC);
-    var empty_rkg = new Array(0x2800);
 
     for (var i = 0; i < 4; i++) {
         if (GHOSTS_LICENSE[i] != null) {
@@ -385,7 +436,10 @@ async function import_rkgs() {
 
             // delete the ghosts that have to be deleted (GHOSTS_TO_BE_DELETED)
             for (addr of GHOSTS_TO_BE_DELETED) {
-                ghost_files.splice(addr - 0x28000, 0x2800, ...empty_rkg);
+                //ghost_files.splice(addr - 0x28000, 0x2800, ...empty_rkg);
+                for (var j = 0; j < 0x2800; j++) {
+                    ghost_files[addr - 0x28000 + j] = 0x00;
+                }
             }
 
             // import pb's
@@ -397,7 +451,7 @@ async function import_rkgs() {
                     var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr;
     
                     // write ghost to savefile
-                    var rkg = handle_rkg(ghost["rkg"]);
+                    var rkg = handle_ghost(ghost["rkg"]);
                     for (var j = 0; j < 0x2800; j++) {
                         ghost_files[ghost_file_addr + j] = rkg[j];
                     }
@@ -409,25 +463,27 @@ async function import_rkgs() {
             }
 
             // import downloaded ghosts
+            var k = 0;
             for (ghost of GHOSTS_LICENSE[i]['download']) {
-                var track_nr = ghost['index'];
+                var ghost_index = ghost['index'];
                 // only import the ghosts that are newly imported
-                if (track_nr == null) {
+                if (ghost_index == null) {
                     if (FREE_DOWNLOAD_SLOTS[i].length == 0) continue; // should never happen
-                    track_nr = FREE_DOWNLOAD_SLOTS[i][0];
+                    ghost_index = FREE_DOWNLOAD_SLOTS[i][0];
                     FREE_DOWNLOAD_SLOTS[i].splice(0, 1);
-                    var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr + 0x50000;
+                    var ghost_file_addr = ghost_index * 0x2800 + license_ghosts_addr + 0x50000;
     
                     // write ghost to savefile
-                    var rkg = handle_rkg(ghost["rkg"]);
+                    var rkg = handle_downloaded(ghost["rkg"], k);
                     for (var j = 0; j < 0x2800; j++) {
                         ghost_files[ghost_file_addr + j] = rkg[j];
                     }
                 }
                 
                 // adjust download flag
-                var byte_nr = 3 - Math.floor(track_nr / 8);
-                save_data[dl_fl_addr + byte_nr] = save_data[dl_fl_addr + byte_nr] | (1 << (track_nr % 8));
+                var byte_nr = 3 - Math.floor(ghost_index / 8);
+                save_data[dl_fl_addr + byte_nr] = save_data[dl_fl_addr + byte_nr] | (1 << (ghost_index % 8));
+                k++;
             }
         }
     }
@@ -475,7 +531,7 @@ async function make_staff_ghost(rkg) {
     return rkg;
 }
 
-async function zip_and_download(ghost_type) {
+async function zip_and_download_ghosts(ghost_type) {
     var total_ghosts = document.querySelectorAll('#license-t input[type=checkbox]:checked').length;
     if (total_ghosts == 0) return;
     if (CURRENT_LICENSE == -1) return;
