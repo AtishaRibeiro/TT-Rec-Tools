@@ -1,25 +1,3 @@
-var TRACK_NAMES = {
-    0: "LC", 1: "MMM", 2: "MG", 3: "TF",
-    4: "MC", 5: "CM", 6: "DKSC", 7: "WGM",
-    8: "DC", 9: "KC", 10: "MT", 11: "GV",
-    12: "DDR", 13: "MH", 14: "BC", 15: "RR",
-    16: "rPB", 17: "rYF", 18: "rGV2", 19: "rMR",
-    20: "rSL", 21: "rSGB", 22: "rDS", 23: "rWS",
-    24: "rDH", 25: "rBC3", 26: "rDKJP", 27: "rMC", 
-    28: "rMC3", 29: "rPG", 30: "rDKM", 31: "rBC"
-};
-
-// track_id: (track_nr, track_index)
-var TRACK_IDS = {
-    0x00: [4, 4],  0x01: [1, 1],  0x02: [2, 2],  0x03: [10, 11],
-    0x04: [3, 3],  0x05: [5, 5],  0x06: [6, 6],  0x07: [7, 7],
-    0x08: [0, 0],  0x09: [8, 8],  0x0A: [12, 13], 0x0B: [11, 10],
-    0x0C: [14, 14], 0x0D: [15, 15], 0x0E: [13, 12], 0x0F: [9, 9],
-    0x10: [24, 16], 0x11: [25, 27], 0x12: [26, 23], 0x13: [27, 30],
-    0x14: [28, 17], 0x15: [29, 24], 0x16: [30, 29], 0x17: [31, 22],
-    0x18: [18, 28], 0x19: [17, 18], 0x1A: [21, 19], 0x1B: [20, 20],
-    0x1C: [23, 31], 0x1D: [22, 26], 0x1E: [19, 25], 0x1F: [16, 21]
-};
 
 var DOWNLOADING_GHOSTS = false;
 var IMPORTING = true; // false when exporting
@@ -65,6 +43,8 @@ function ghosts_to_table(tbody, ghosts, ghost_import) {
     for (var ghost of ghosts) {
         var row_ref = tbody.insertRow();
         row_ref.id = `${ghost_import ? 'import' : 'license'}-${row_index}`;
+        row_ref.addEventListener("mouseenter", create_ghost_tooltip(ghost));
+        row_ref.addEventListener("mouseleave", destroy_ghost_tooltip(ghost));
         row_index += 1;
         // add track name
         var new_cell = row_ref.insertCell(0);
@@ -171,42 +151,44 @@ function update_chosen_license(license_index, ghost_type) {
     }
 }
 
-function remove_padding(rkg) {
-    // get the length of the rkg (without CRC) while assuming that it is not a CTGP rkg
-    //var compressed_length = rkg.slice(0x88, 0x8C);
-    var dataview = new DataView(rkg.buffer);
-    var rkg_length =  dataview.getInt32(0x88) + 0x90;
-
-    // figure out if it is a CTGP ghost by looking for the 'CKGD' ascii starting from the length we got
-    // for (var i = rkg_length; i < rkg.length; i++) {
-    //     if (String.fromCharCode(rkg[i]) == 'C' && String.fromCharCode(rkg[i+1]) == 'K' && 
-    //         String.fromCharCode(rkg[i+2]) == 'G' && String.fromCharCode(rkg[i+3]) == 'D') {
-    //             rkg_length = i + 0x4;
-    //     }
-    // }
-
-    return rkg.slice(0x0, rkg_length)
-}
-
 function get_ghost_summary(rkg, index, address) {
-    if ((rkg[12] & 0x08) == 0x08) { // if compressed
-        rkg = remove_padding(rkg);
+    if ((rkg[12] & 0x08) == 0x08) { // if compressed remove potential ctgp data
+        var dataview = new DataView(rkg.buffer);
+        var rkg_length =  dataview.getInt32(0x88) + 0x90;
+        rkg = rkg.slice(0x0, rkg_length);
     }
 
+    // extract track information
     var track_id = rkg[0x7] >> 0x2;
     var track_index = TRACK_IDS[track_id][1];
 
-    var time_1 = rkg[0x4];
-    var time_2 = rkg[0x5];
-    var time_3 = rkg[0x6];
+    // extract misc information
+    var controller = CONTROLLERS[rkg[0xB] & 0xF];
+    var drift = (rkg[0xD] >> 0x1) & 0x1 ? "Automatic" : "Manual"; 
+    var vehicle = VEHICLES[rkg[0x8] >> 0x2];
+    var character = CHARACTERS[(rkg[0x8] & 0x3) << 0x4 | (rkg[0x9]) >> 0x4];
+
     // extract the time
-    var min = time_1 >> 0x1;
-    var sec = ((time_1 & 0x1) << 0x6) | (time_2 >> 0x2);
-    var mil = ((time_2 & 0x3) << 0x8) | time_3;
+    var min = rkg[0x4] >> 0x1;
+    var sec = ((rkg[0x4] & 0x1) << 0x6) | (rkg[0x5] >> 0x2);
+    var mil = ((rkg[0x5] & 0x3) << 0x8) | rkg[0x6];
 
     min = min.toString();
     sec = ("00" + sec.toString()).slice(-2);
     mil = ("000" + mil.toString()).slice(-3);
+
+    // extract lap times
+    var nr_laps = rkg[0x10];
+    var lap_times = [];
+    for (var i = 0; i < nr_laps; i++) {
+        let min = rkg[0x11 + i * 0x3] >> 0x1;
+        let sec = ((rkg[0x11 + i * 0x3] & 0x1) << 0x6) | (rkg[0x12 + i * 0x3] >> 0x2);
+        let mil = ((rkg[0x12 + i * 0x3] & 0x3) << 0x8) | rkg[0x13 + i * 0x3];
+        min = min.toString();
+        sec = ("00" + sec.toString()).slice(-2);
+        mil = ("000" + mil.toString()).slice(-3);
+        lap_times.push(`${min}:${sec}.${mil}`);
+    }
 
     var mii_name = "";
     for (var i = 0x3E; i < 0x52; i += 2) {
@@ -218,7 +200,12 @@ function get_ghost_summary(rkg, index, address) {
         "track_id": track_id,
         "track_index": track_index,
         "time": `${min}:${sec}.${mil}`,
+        "lap_times": lap_times,
         "mii_name": mii_name,
+        "controller": controller,
+        "drift": drift,
+        "vehicle": vehicle,
+        "character": character,
         "rkg": rkg,
         "index": index,
         "address": address
@@ -436,7 +423,6 @@ async function save_and_download_save() {
 
             // delete the ghosts that have to be deleted (GHOSTS_TO_BE_DELETED)
             for (addr of GHOSTS_TO_BE_DELETED) {
-                //ghost_files.splice(addr - 0x28000, 0x2800, ...empty_rkg);
                 for (var j = 0; j < 0x2800; j++) {
                     ghost_files[addr - 0x28000 + j] = 0x00;
                 }

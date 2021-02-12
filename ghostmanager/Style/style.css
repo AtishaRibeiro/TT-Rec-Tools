@@ -215,6 +215,29 @@ tr {
     cursor: pointer;
 }
 
+.tooltip {
+    opacity: 0;
+    -webkit-transition: opacity 0.5s;
+    -moz-transition: opacity 0.5s; 
+    transition: opacity 0.5s;
+
+    color: #DDDDDD;
+    background-color: #001f3f;
+    z-index: 100;
+    padding: .5em;
+    position: fixed;
+}
+
+.tooltip.fade{
+    opacity: 1;
+}
+
+.tooltip .mid-col {
+    border-right: #DDDDDD solid 1px;
+    width: 0px;
+}
+    
+
 /* scrollbar-color is firefox only for the time being*/
 
 .l1-t {

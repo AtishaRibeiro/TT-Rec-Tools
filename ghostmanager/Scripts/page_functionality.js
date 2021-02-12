@@ -131,3 +131,63 @@ function update_progress(completed, total) {
     var progress_text = document.getElementById('export_progress');
     progress_text.innerHTML = `&nbsp; ${completed} / ${total}`;
 }
+
+function create_ghost_tooltip(td, info) {
+    var tooltip = document.createElement("div");
+    tooltip.innerHTML = "test";
+    td.appendChild(tooltip);
+}
+
+var create_ghost_tooltip = function (ghost) {
+    return function (event) {
+        var tr = event.target;
+        var tooltip = document.createElement("div");
+        tooltip.className = "box is-fullwidth tooltip columns is-gapless neutral";
+        var tr_rect = tr.getBoundingClientRect();
+        tooltip.style.left = (tr_rect.left +  80) + "px";
+        tooltip.style.top = (tr_rect.bottom + 10) + "px";
+        tooltip.style.width = (tr_rect.right - tr_rect.left) / 1.5 + "px";
+        
+        var l_col = document.createElement("ul");
+        l_col.className = "column";
+        //l_col.style.borderRight = '#DDDDDD solid 1px';
+        var header = document.createElement("li");
+        header.style.textDecoration = 'underline';
+        header.innerHTML = ghost['time'];
+        l_col.appendChild(header);
+        for (var i = 0; i < ghost["lap_times"].length; i++) {
+            var lap_div = document.createElement("li");
+            lap_div.innerHTML = `<span class="has-text-weight-bold">Lap ${i+1}:</span> ${ghost["lap_times"][i]}`;
+            l_col.appendChild(lap_div);
+        }
+
+        var m_col = document.createElement("ul");
+        m_col.className = "column mid-col is-0";
+        m_col.style.borderRight = '#DDDDDD solid 1px';
+
+        var r_col = document.createElement("ul");
+        r_col.className = "column";
+        r_col.innerHTML = `<li>${ghost["character"]}</li>
+        <li>${ghost["vehicle"]}</li>
+        <li>${ghost["controller"]}</li>
+        <li>${ghost["drift"]}</li>`
+
+        tooltip.appendChild(l_col);
+        tooltip.appendChild(m_col);
+        tooltip.appendChild(r_col);
+        tr.parentNode.appendChild(tooltip);
+        
+        setTimeout(function() {
+            tr.parentNode.querySelector(".tooltip").classList.add("fade");
+        }, 100);
+    }
+}
+
+var destroy_ghost_tooltip = function (ghost) {
+    return function (event) {
+        var tooltips = event.target.parentNode.querySelectorAll('.tooltip');
+        tooltips.forEach(function(tooltip) {
+            event.target.parentNode.removeChild(tooltip);
+        })
+    }
+}
