@@ -23,7 +23,7 @@ var TRACK_IDS = {
 
 var CONTROLLERS = {
     0x0: "Wii Wheel",
-    0x1: "Nunchuck",
+    0x1: "Nunchuk",
     0x2: "Class. Controller",
     0x3: "GCN Controller",
     0x4: "USB Controller"

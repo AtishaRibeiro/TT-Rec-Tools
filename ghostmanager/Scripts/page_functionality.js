@@ -2,6 +2,9 @@
 
 document.addEventListener("DOMContentLoaded", function() {
 
+    update_import_table(true);
+    update_license_table(-1, '', true);
+
     const tabSelector = document.querySelectorAll('.tabs li');
     tabSelector.forEach(function(tabObject) {
         tabObject.onclick = () => {
@@ -81,36 +84,48 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // highlighting functions (rksys)
 
-    ;['dragenter', 'dragover'].forEach(eventName => {
-        rksysDropArea.addEventListener(eventName, highlight, false);
-    })
+    rksysDropArea.addEventListener("dragenter", rksysHighlight, false);
     
     ;['dragleave', 'drop'].forEach(eventName => {
-    rksysDropArea.addEventListener(eventName, unhighlight, false);
+        rksysDropArea.addEventListener(eventName, rksysUnhighlight, false);
     })
     
-    function highlight(e) {
-    rksysDropArea.classList.add('highlight');
+    function rksysHighlight(e) {
+        rksysDropArea.classList.add('highlight');
     }
     
-    function unhighlight(e) {
-    rksysDropArea.classList.remove('highlight');
+    function rksysUnhighlight(e) {
+        rksysDropArea.classList.remove('highlight');
+    }
+
+    // RKG
+
+    const rkgDropArea = document.getElementById('ghost-import');
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        rkgDropArea.addEventListener(eventName, preventDefaults, false);
+    })
+
+    rkgDropArea.addEventListener('drop', handleRKGDrop, false);
+
+    function handleRKGDrop(e) {
+        rkgFileInput.files = e.dataTransfer.files
+        rkgFileInput.onchange();
+    }
+    
+    rkgDropArea.addEventListener("dragenter", rkgHighlight, false);
+    
+    ;['dragleave', 'drop'].forEach(eventName => {
+        rkgDropArea.addEventListener(eventName, rkgUnhighlight, false);
+    })
+    
+    function rkgHighlight(e) {
+        rkgDropArea.classList.add('highlight');
+    }
+    
+    function rkgUnhighlight(e) {
+        rkgDropArea.classList.remove('highlight');
     }
 });
-
-function toggle_checkboxes(license_button) {
-    var license_index = parseInt(license_button.id.slice(license_button.id.length - 1));
-    var tbody = document.getElementById(`l${license_index}_t`);
-    var select_all = license_button.innerHTML == "Select All";
-    for (var row of tbody.rows) {
-        row.cells[3].childNodes[0].checked = select_all;
-    }
-    if (select_all) {
-        license_button.innerHTML = "Deselect All";
-    } else {
-        license_button.innerHTML = "Select All";
-    }
-}
 
 DOWNLOADING_GHOSTS = false;
 
@@ -150,7 +165,6 @@ var create_ghost_tooltip = function (ghost) {
         
         var l_col = document.createElement("ul");
         l_col.className = "column";
-        //l_col.style.borderRight = '#DDDDDD solid 1px';
         var header = document.createElement("li");
         header.style.textDecoration = 'underline';
         header.innerHTML = ghost['time'];
@@ -190,4 +204,23 @@ var destroy_ghost_tooltip = function (ghost) {
             event.target.parentNode.removeChild(tooltip);
         })
     }
+}
+
+var remove_import_ghost = function (event) {
+    var test = parseInt(event.target.id.split('-')[1]);
+    GHOSTS_IMPORT.splice(parseInt(event.currentTarget.parentNode.id.split('-')[1]), 1);
+    update_import_table();
+}
+
+var get_blank_rksys = function () {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '../rksys.dat', true);
+    xhr.onreadystatechange= function() {
+        if (this.readyState!==4) return;
+        if (this.status!==200) return;
+        var rksysUpload = document.getElementById('rksys');
+        rksysUpload.files = this.response;
+        rksysUpload.onchange();
+    };
+    xhr.send();
 }

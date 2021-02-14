@@ -123,7 +123,7 @@ button, button > * {
 }
 
 tbody {
-    height: 30em;
+    height: 35em;
     overflow-y: auto;
     display: block;
     scrollbar-width: thin;
@@ -148,6 +148,11 @@ tr {
 
 .table td {
     border: 0px solid;
+}
+
+#download-col .button {
+    margin-top: 0;
+    height: 100%;
 }
 
 #mini-select {
@@ -207,7 +212,7 @@ tr {
 }
 
 #mid-col {
-    padding-top: 220px;
+    padding-top: 17em;
 }
 
 #import-button {
