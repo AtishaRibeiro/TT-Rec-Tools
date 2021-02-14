@@ -213,14 +213,13 @@ var remove_import_ghost = function (event) {
 }
 
 var get_blank_rksys = function () {
+    console.log("hello?");
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'rksys.dat', true);
     xhr.onreadystatechange= function() {
         if (this.readyState!==4) return;
         if (this.status!==200) return;
-        var rksysUpload = document.getElementById('rksys');
-        rksysUpload.files = this.response;
-        rksysUpload.onchange();
+        read_rkg_files(this.response);
     };
     xhr.send();
 }
