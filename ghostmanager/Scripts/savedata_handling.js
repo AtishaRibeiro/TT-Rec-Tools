@@ -280,13 +280,20 @@ function read_rkg_files(files) {
 
 function read_rksys_file(file_name_obj, files) {
     const reader = new FileReader();
-    reader.readAsArrayBuffer(files[0]);
+    var file_name;
+    if (typeof files == "FileList") {
+        reader.readAsArrayBuffer(files[0]);
+        file_name = files[0].name;
+    } else {
+        reader.readAsArrayBuffer(files);
+        file_name = "rksys.dat";
+    }
     reader.onload = function(){
         const arrayBuffer = this.result;
         RKSYS = new Uint8Array(arrayBuffer);   
         if (String.fromCharCode.apply(null, RKSYS.slice(0, 4)) == "RKSD") {
             file_name_obj.classList.remove("no-file");
-            file_name_obj.textContent = files[0].name;
+            file_name_obj.textContent = file_name;
 
             var first_license = -1;
             for (var i = 0; i < 4; i++) { // check for valid licenses

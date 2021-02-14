@@ -213,14 +213,16 @@ var remove_import_ghost = function (event) {
 }
 
 var get_blank_rksys = function () {
-    console.log("hello?");
     var xhr = new XMLHttpRequest();
+    xhr.responseType = Blob;
+    xhr.overrideMimeType(Blob);
     xhr.open('GET', 'rksys.dat', true);
     xhr.onreadystatechange= function() {
         if (this.readyState!==4) return;
         if (this.status!==200) return;
         const fileName = document.querySelector('#rksys .file-name');
-        read_rksys_file(fileName, [this.response]);
+        var file = new File([this.response], "rksys.dat")
+        read_rksys_file(fileName, file);
     };
     xhr.send();
 }
