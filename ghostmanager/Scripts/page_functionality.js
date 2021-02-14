@@ -219,7 +219,8 @@ var get_blank_rksys = function () {
     xhr.onreadystatechange= function() {
         if (this.readyState!==4) return;
         if (this.status!==200) return;
-        read_rkg_files(this.response);
+        const fileName = document.querySelector('#rksys .file-name');
+        read_rksys_file(fileName, [this.response]);
     };
     xhr.send();
 }
