@@ -214,7 +214,7 @@ var remove_import_ghost = function (event) {
 
 var get_blank_rksys = function () {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '../rksys.dat', true);
+    xhr.open('GET', 'rksys.dat', true);
     xhr.onreadystatechange= function() {
         if (this.readyState!==4) return;
         if (this.status!==200) return;
