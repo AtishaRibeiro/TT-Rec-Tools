@@ -123,7 +123,7 @@ button, button > * {
 }
 
 tbody {
-    height: 35em;
+    height: 30em;
     overflow-y: auto;
     display: block;
     scrollbar-width: thin;
@@ -212,11 +212,10 @@ tr {
 }
 
 #mid-col {
-    padding-top: 17em;
+    padding-top: 14em;
 }
 
 #import-button {
-    margin-bottom: 170px;
     cursor: pointer;
 }
 

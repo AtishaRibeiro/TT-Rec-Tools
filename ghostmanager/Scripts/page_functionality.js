@@ -73,7 +73,7 @@ function destroy_ghost_tooltip(event) {
 
 var remove_import_ghost = function (event) {
     GHOSTS_IMPORT.splice(parseInt(event.currentTarget.parentNode.id.split('-')[1]), 1);
-    update_import_table();
+    update_import_table(initial=(GHOSTS_IMPORT.length == 0));
 }
 
 var get_blank_rksys = function () {
@@ -141,7 +141,7 @@ function initial_table(tbody, ghost_import) {
     new_cell.classList.add("is-size-5", "has-text-weight-bold");
 
     if (ghost_import) {
-        row_ref.style.paddingTop = "12em";
+        row_ref.style.paddingTop = "10em";
         var clone_icon = document.createElement('I');
         clone_icon.className = 'far fa-clone fa-4x';
         new_cell.appendChild(clone_icon);
@@ -150,7 +150,7 @@ function initial_table(tbody, ghost_import) {
         //text.classList.add("is-size-5", "has-text-weight-bold");
         new_cell.appendChild(text);
     } else {
-        row_ref.style.paddingTop = "10em";
+        row_ref.style.paddingTop = "8em";
         var clone_icon = document.createElement('I');
         clone_icon.className = 'far fa-clone fa-4x';
         new_cell.appendChild(clone_icon);
@@ -205,6 +205,10 @@ function update_license_table(index, ghost_type, initial=false) {
     if (index == -1) {
         license_div.className = license_div.className.replace(class_regex, 'neutral-tabs');
         new_tbody = initial_table(new_tbody, false);
+        var download_count = document.querySelector('#download span');
+        download_count.innerHTML = '0/32';
+        download_count.classList.remove('is-danger');
+        download_count.classList.add('is-info');
     } else {
         license_div.className = license_div.className.replace(class_regex, `l${index+1}-tabs`);
         new_tbody.classList.add(`l${index+1}-t`);
