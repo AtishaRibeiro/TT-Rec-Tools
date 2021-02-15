@@ -116,8 +116,7 @@ function read_rksys_file(file_name_obj, files, blank_rksys=false) {
             // in here since it's all just zeros from that point on
             RKSYS = new Uint8Array(0x2BC000);
             RKSYS.set(new Uint8Array(arrayBuffer));
-            var empty_ghosts = new Uint8Array(0x294000); // I can't do this inplace because of Chrome
-            RKSYS.set(0x28000, empty_ghosts);
+            RKSYS.set(new Uint8Array(0x294000), 0x28000);
         }
         if (String.fromCharCode.apply(null, RKSYS.slice(0, 4)) == "RKSD") {
             file_name_obj.classList.remove("no-file");
