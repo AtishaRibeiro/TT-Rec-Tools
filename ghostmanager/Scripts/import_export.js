@@ -99,6 +99,7 @@ function prepare_rkg_for_import(rkg, index) {
 async function save_and_download_save() {
     var ghost_files = RKSYS.slice(0x28000, 0x2BC000);
     var save_data = RKSYS.slice(0, 0x27FFC);
+    var free_download_slots = FREE_DOWNLOAD_SLOTS;
 
     for (var i = 0; i < 4; i++) {
         if (GHOSTS_LICENSE[i] != null) {
@@ -126,11 +127,11 @@ async function save_and_download_save() {
 
             // import pb's
             for (ghost of GHOSTS_LICENSE[i]['pb']) {
+                var track_nr = ghost['index'];
                 // only import the ghosts that are newly imported
                 if (ghost['type'] == 'import') {
-                    var track_nr = TRACK_IDS[ghost["track_id"]][0];
+                    track_nr = TRACK_IDS[ghost["track_id"]][0];
                     var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr;
-    
                     // write ghost to savefile
                     var rkg = prepare_rkg_for_import(ghost["rkg"], null);
                     for (var j = 0; j < 0x2800; j++) {
@@ -152,12 +153,12 @@ async function save_and_download_save() {
 
             // import downloaded ghosts
             for (ghost of GHOSTS_LICENSE[i]['download']) {
+                var ghost_index = ghost['index'];
                 // only import the ghosts that are newly imported
                 if (ghost['type'] == 'import') {
-                    if (FREE_DOWNLOAD_SLOTS[i].length == 0) continue; // should never happen
-                    ghost_index = FREE_DOWNLOAD_SLOTS[i][0];
-                    FREE_DOWNLOAD_SLOTS[i].splice(0, 1);
-                    var ghost_index = ghost['index'];
+                    if (free_download_slots[i].length == 0) continue; // should never happen
+                    ghost_index = free_download_slots[i][0];
+                    free_download_slots[i].splice(0, 1);
                     var ghost_file_addr = ghost_index * 0x2800 + license_ghosts_addr + 0x50000;
     
                     // write ghost to savefile
@@ -174,11 +175,11 @@ async function save_and_download_save() {
     }
 
     var checksum_array = toBytesInt32(crc32(save_data));
-    RKSYS = new Uint8Array(save_data.length + checksum_array.length + ghost_files.length);
-    RKSYS.set(save_data);
-    RKSYS.set(checksum_array, save_data.length);
-    RKSYS.set(ghost_files, save_data.length + checksum_array.length);
-    create_file_download(new Blob([RKSYS], { type: 'application/octet-stream' }), "rksys.dat");
+    var new_rksys = new Uint8Array(save_data.length + checksum_array.length + ghost_files.length);
+    new_rksys.set(save_data);
+    new_rksys.set(checksum_array, save_data.length);
+    new_rksys.set(ghost_files, save_data.length + checksum_array.length);
+    create_file_download(new Blob([new_rksys], { type: 'application/octet-stream' }), "rksys.dat");
 }
 
 async function make_staff_ghost(rkg) {
