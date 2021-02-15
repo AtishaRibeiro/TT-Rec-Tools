@@ -127,7 +127,7 @@ async function save_and_download_save() {
             // import pb's
             for (ghost of GHOSTS_LICENSE[i]['pb']) {
                 // only import the ghosts that are newly imported
-                if (ghost['type'] != 'import') {
+                if (ghost['type'] == 'import') {
                     var track_nr = TRACK_IDS[ghost["track_id"]][0];
                     var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr;
     
@@ -153,7 +153,7 @@ async function save_and_download_save() {
             // import downloaded ghosts
             for (ghost of GHOSTS_LICENSE[i]['download']) {
                 // only import the ghosts that are newly imported
-                if (ghost['type'] != 'import') {
+                if (ghost['type'] == 'import') {
                     if (FREE_DOWNLOAD_SLOTS[i].length == 0) continue; // should never happen
                     ghost_index = FREE_DOWNLOAD_SLOTS[i][0];
                     FREE_DOWNLOAD_SLOTS[i].splice(0, 1);
