@@ -3,7 +3,6 @@
 function DecodeAll(src) {
     var readBytes = 0;
     var srcSize = src.length;
-    console.log(`input file size: ${srcSize.toString(16)}\n`);
     var decodedBytes = new Uint8Array();
 
     while (readBytes < srcSize) {
@@ -29,7 +28,6 @@ function DecodeAll(src) {
 
         var r = decodeYaz1(src, readBytes, srcSize - readBytes, Dst, Size);
         readBytes += r["srcPos"];
-        console.log(`Read ${readBytes.toString(16)} bytes from input\n`);
         
         decodedBytes = r["dst"];
     }
