@@ -65,9 +65,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // drag&drop functionality
 
-    const rksysDropArea = document.getElementById('rksys');
-    const rksysDropArea2 = document.getElementById('license');
-    const rkgDropArea = document.getElementById('ghost-import');
+    var rksysDropArea = document.getElementById('rksys');
+    var rksysDropArea2 = document.getElementById('license');
+    var rkgDropArea = document.getElementById('ghost-import');
 
     function preventDefaults(e) {
         e.preventDefault();
@@ -80,31 +80,33 @@ document.addEventListener("DOMContentLoaded", function() {
         rkgDropArea.addEventListener(eventName, preventDefaults, false);
     })
 
+    new Dragster(rksysDropArea);
+    new Dragster(rksysDropArea2);
+    new Dragster(rkgDropArea);
+
+    document.addEventListener("dragster:enter", function (e) {
+        e.target.classList.add("highlight");
+    }, false );
+
+    document.addEventListener("dragster:leave", function (e) {
+        e.target.classList.remove("highlight");
+    }, false );
+
     function handleRksysDrop(e) {
-        rksysFileInput.files = e.dataTransfer.files
+        rksysFileInput.files = e.dataTransfer.files;
         rksysFileInput.onchange();
+        e.currentTarget.classList.remove("highlight");
     }
 
     function handleRKGDrop(e) {
-        rkgFileInput.files = e.dataTransfer.files
+        rkgFileInput.files = e.dataTransfer.files;
         rkgFileInput.onchange();
+        e.currentTarget.classList.remove("highlight");
     }
 
     rksysDropArea.addEventListener('drop', handleRksysDrop, false);
     rksysDropArea2.addEventListener('drop', handleRksysDrop, false);
     rkgDropArea.addEventListener('drop', handleRKGDrop, false);
-
-    // highlighting functions
-
-    rksysDropArea.addEventListener("dragenter", (e) => {rksysDropArea.classList.add('highlight');}, false);
-    rksysDropArea2.addEventListener("dragenter", (e) => {rksysDropArea2.classList.add('highlight');}, false);
-    rkgDropArea.addEventListener("dragenter", (e) => {rkgDropArea.classList.add('highlight');}, false);
-    
-    ;['dragleave', 'drop'].forEach(eventName => {
-        rksysDropArea.addEventListener(eventName, (e) => {rksysDropArea.classList.remove('highlight');}, false);
-        rksysDropArea2.addEventListener(eventName, (e) => {rksysDropArea2.classList.remove('highlight');}, false);
-        rkgDropArea.addEventListener(eventName, (e) => {rkgDropArea.classList.remove('highlight');}, false);
-    })
 });
 
 DOWNLOADING_GHOSTS = false;

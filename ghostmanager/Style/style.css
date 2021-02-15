@@ -40,21 +40,6 @@ body {
     border-radius: 5px;
 }
 
-/* for hovering functionality */
-#license * {
-    pointer-events: none;
-}
-
-/* for hovering functionality */
-#rksys * {
-    pointer-events: none;
-}
-
-/* for hovering functionality */
-#ghost-import * {
-    pointer-events: none;
-}
-
 #rkg-button {
     margin-top: 0.5em;
 }
