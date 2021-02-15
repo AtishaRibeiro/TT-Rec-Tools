@@ -18,6 +18,8 @@ The following people helped in some way or another:
 
 - Ghost Manager
 	- Vega: rksys.dat documentation
+	- [JSZip](https://stuk.github.io/jszip/)
+	- [Dragster](http://bensmithett.github.io/dragster/)
 - Custom Top 10
 	- Vega: globe positions, CRC bypass code, further code optimisation
 	- Anarion: globe position code
