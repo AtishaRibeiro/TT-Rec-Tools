@@ -14,7 +14,7 @@ var FREE_DOWNLOAD_SLOTS = [[], [], [], []]; // the addresses of the available do
 
 // FUNCTIONS
 
-function get_ghost_summary(rkg, index, address) {
+function get_ghost_summary(rkg, index, address, ghost_type) {
     if ((rkg[12] & 0x08) == 0x08) { // if compressed remove potential ctgp data
         var dataview = new DataView(rkg.buffer);
         var rkg_length =  dataview.getInt32(0x88) + 0x90;
@@ -71,7 +71,8 @@ function get_ghost_summary(rkg, index, address) {
         "character": character,
         "rkg": rkg,
         "index": index,
-        "address": address
+        "address": address,
+        "type": ghost_type
     };
 }
 
@@ -84,7 +85,7 @@ function read_rkg_files(files) {
             const arrayBuffer = this.result;
             var rkg = new Uint8Array(arrayBuffer);
             if (String.fromCharCode.apply(null, rkg.slice(0, 4)) == "RKGD") {
-                var ghost_summary = get_ghost_summary(rkg, null, null);
+                var ghost_summary = get_ghost_summary(rkg, null, null, 'import');
                 GHOSTS_IMPORT.push(ghost_summary);
             }
 
@@ -152,7 +153,7 @@ function store_ghost(license_index, address, ghost_type, index) {
     // 0x2FFC instead of 0x2800 since we recalculate the CRC anyway
     var rkg = RKSYS.slice(address, address + 0x27FC);
     if (String.fromCharCode.apply(null, rkg.slice(0, 4)) == "RKGD") {
-        var ghost = get_ghost_summary(rkg, index, address);
+        var ghost = get_ghost_summary(rkg, index, address, ghost_type);
         GHOSTS_LICENSE[license_index][ghost_type].push(ghost);
     } else if (ghost_type == 'download') {
         FREE_DOWNLOAD_SLOTS[license_index].push(index);
@@ -179,11 +180,13 @@ function delete_selected_ghosts(ghost_type) {
     for (var j = tbody.rows.length - 1; j >= 0; j--) {
         var row = tbody.rows[j];
         if (row.cells[3].childNodes[0].checked) { // if ghost is slecected for deletion
-            if (ghost_type == 'download') {
-                // since this slot is going to be freed up after deletion, add it to the free slots
-                FREE_DOWNLOAD_SLOTS[CURRENT_LICENSE].push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]['index']);
+            if (GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]['type'] != 'import') { // if the ghost was not an imported ghost
+                if (ghost_type == 'download') {
+                    // since this slot is going to be freed up after deletion, add it to the free slots
+                    FREE_DOWNLOAD_SLOTS[CURRENT_LICENSE].push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]['index']);
+                }
+                GHOSTS_TO_BE_DELETED.push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]);
             }
-            GHOSTS_TO_BE_DELETED.push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]['address']);
             GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].splice(j, 1);
         }
     }

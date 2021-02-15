@@ -59,7 +59,13 @@ var create_ghost_tooltip = function (ghost) {
         tr.parentNode.appendChild(tooltip);
         
         setTimeout(function() {
-            tr.parentNode.querySelector(".tooltip").classList.add("fade");
+            try {
+                tr.parentNode.querySelector(".tooltip").classList.add("fade");
+            } catch (err) {
+                // nothing :-)
+                // this causes an error very often but it isn't a problem
+            }
+            
         }, 100);
     }
 }

@@ -112,18 +112,23 @@ async function save_and_download_save() {
             const dl_fl_addr = license_save_addr + 0x8; // download flags address
 
             // delete the ghosts that have to be deleted (GHOSTS_TO_BE_DELETED)
-            for (addr of GHOSTS_TO_BE_DELETED) {
+            for (ghost of GHOSTS_TO_BE_DELETED) {
                 for (var j = 0; j < 0x2800; j++) {
-                    ghost_files[addr - 0x28000 + j] = 0x00;
+                    ghost_files[ghost['address'] - 0x28000 + j] = 0x00;
+                    if (ghost['type'] == 'pb') { // clear the time entry data if pb
+                        var entry_address = license_save_addr + 0xDB8 + 0x60 * TRACK_IDS[ghost["track_id"]][0];
+                        for (var k = 0x54; k <= 0x58; k++) {
+                            save_data[entry_address + k] = 0x00;
+                        }
+                    }
                 }
             }
 
             // import pb's
             for (ghost of GHOSTS_LICENSE[i]['pb']) {
-                var track_nr = ghost['index'];
                 // only import the ghosts that are newly imported
-                if (track_nr == null) {
-                    track_nr = TRACK_IDS[ghost["track_id"]][0];
+                if (ghost['type'] != 'import') {
+                    var track_nr = TRACK_IDS[ghost["track_id"]][0];
                     var ghost_file_addr = track_nr * 0x2800 + license_ghosts_addr;
     
                     // write ghost to savefile
@@ -147,12 +152,12 @@ async function save_and_download_save() {
 
             // import downloaded ghosts
             for (ghost of GHOSTS_LICENSE[i]['download']) {
-                var ghost_index = ghost['index'];
                 // only import the ghosts that are newly imported
-                if (ghost_index == null) {
+                if (ghost['type'] != 'import') {
                     if (FREE_DOWNLOAD_SLOTS[i].length == 0) continue; // should never happen
                     ghost_index = FREE_DOWNLOAD_SLOTS[i][0];
                     FREE_DOWNLOAD_SLOTS[i].splice(0, 1);
+                    var ghost_index = ghost['index'];
                     var ghost_file_addr = ghost_index * 0x2800 + license_ghosts_addr + 0x50000;
     
                     // write ghost to savefile
