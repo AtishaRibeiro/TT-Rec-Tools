@@ -63,68 +63,48 @@ document.addEventListener("DOMContentLoaded", function() {
         import_ghosts(active_tab.id);
     }
 
-    // drag&drop functionality (rksys)
+    // drag&drop functionality
 
     const rksysDropArea = document.getElementById('rksys');
-    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        rksysDropArea.addEventListener(eventName, preventDefaults, false);
-    })
+    const rksysDropArea2 = document.getElementById('license');
+    const rkgDropArea = document.getElementById('ghost-import');
 
     function preventDefaults(e) {
         e.preventDefault();
         e.stopPropagation();
     }
 
-    rksysDropArea.addEventListener('drop', handleRksysDrop, false);
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        rksysDropArea.addEventListener(eventName, preventDefaults, false);
+        rksysDropArea2.addEventListener(eventName, preventDefaults, false);
+        rkgDropArea.addEventListener(eventName, preventDefaults, false);
+    })
 
     function handleRksysDrop(e) {
         rksysFileInput.files = e.dataTransfer.files
         rksysFileInput.onchange();
     }
 
-    // highlighting functions (rksys)
-
-    rksysDropArea.addEventListener("dragenter", rksysHighlight, false);
-    
-    ;['dragleave', 'drop'].forEach(eventName => {
-        rksysDropArea.addEventListener(eventName, rksysUnhighlight, false);
-    })
-    
-    function rksysHighlight(e) {
-        rksysDropArea.classList.add('highlight');
-    }
-    
-    function rksysUnhighlight(e) {
-        rksysDropArea.classList.remove('highlight');
-    }
-
-    // RKG
-
-    const rkgDropArea = document.getElementById('ghost-import');
-    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        rkgDropArea.addEventListener(eventName, preventDefaults, false);
-    })
-
-    rkgDropArea.addEventListener('drop', handleRKGDrop, false);
-
     function handleRKGDrop(e) {
         rkgFileInput.files = e.dataTransfer.files
         rkgFileInput.onchange();
     }
-    
-    rkgDropArea.addEventListener("dragenter", rkgHighlight, false);
+
+    rksysDropArea.addEventListener('drop', handleRksysDrop, false);
+    rksysDropArea2.addEventListener('drop', handleRksysDrop, false);
+    rkgDropArea.addEventListener('drop', handleRKGDrop, false);
+
+    // highlighting functions
+
+    rksysDropArea.addEventListener("dragenter", (e) => {rksysDropArea.classList.add('highlight');}, false);
+    rksysDropArea2.addEventListener("dragenter", (e) => {rksysDropArea2.classList.add('highlight');}, false);
+    rkgDropArea.addEventListener("dragenter", (e) => {rkgDropArea.classList.add('highlight');}, false);
     
     ;['dragleave', 'drop'].forEach(eventName => {
-        rkgDropArea.addEventListener(eventName, rkgUnhighlight, false);
+        rksysDropArea.addEventListener(eventName, (e) => {rksysDropArea.classList.remove('highlight');}, false);
+        rksysDropArea2.addEventListener(eventName, (e) => {rksysDropArea2.classList.remove('highlight');}, false);
+        rkgDropArea.addEventListener(eventName, (e) => {rkgDropArea.classList.remove('highlight');}, false);
     })
-    
-    function rkgHighlight(e) {
-        rkgDropArea.classList.add('highlight');
-    }
-    
-    function rkgUnhighlight(e) {
-        rkgDropArea.classList.remove('highlight');
-    }
 });
 
 DOWNLOADING_GHOSTS = false;
@@ -181,10 +161,10 @@ var create_ghost_tooltip = function (ghost) {
 
         var r_col = document.createElement("ul");
         r_col.className = "column";
-        r_col.innerHTML = `<li>${ghost["character"]}</li>
-        <li>${ghost["vehicle"]}</li>
-        <li>${ghost["controller"]}</li>
-        <li>${ghost["drift"]}</li>`
+        r_col.innerHTML = `<li>${CHARACTERS[ghost["character"]]}</li>
+        <li>${VEHICLES[ghost["vehicle"]]}</li>
+        <li>${CONTROLLERS[ghost["controller"]]}</li>
+        <li>${ghost["drift"] ? "Automatic" : "Manual"}</li>`
 
         tooltip.appendChild(l_col);
         tooltip.appendChild(m_col);
@@ -214,15 +194,14 @@ var remove_import_ghost = function (event) {
 
 var get_blank_rksys = function () {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = Blob;
+    xhr.responseType = 'arraybuffer';
     xhr.overrideMimeType(Blob);
     xhr.open('GET', 'rksys.dat', true);
     xhr.onreadystatechange= function() {
         if (this.readyState!==4) return;
         if (this.status!==200) return;
         const fileName = document.querySelector('#rksys .file-name');
-        var file = new File([this.response], "rksys.dat")
-        read_rksys_file(fileName, file);
+        read_rksys_file(fileName, new Blob([this.response]), true);
     };
     xhr.send();
 }

@@ -77,9 +77,8 @@ function ghosts_to_table(tbody, ghosts, ghost_import) {
     return tbody;
 }
 
-function initial_import_table(tbody, ghost_import) {
+function initial_table(tbody, ghost_import) {
     var row_ref = tbody.insertRow();
-    row_ref.style.paddingTop = "12em";
     row_ref.class = "is-centered";
     var new_cell = row_ref.insertCell(0);
     new_cell.style.width = "0%";
@@ -88,6 +87,7 @@ function initial_import_table(tbody, ghost_import) {
     new_cell.classList.add("is-size-5", "has-text-weight-bold");
 
     if (ghost_import) {
+        row_ref.style.paddingTop = "12em";
         var clone_icon = document.createElement('I');
         clone_icon.className = 'far fa-clone fa-4x';
         new_cell.appendChild(clone_icon);
@@ -96,8 +96,12 @@ function initial_import_table(tbody, ghost_import) {
         //text.classList.add("is-size-5", "has-text-weight-bold");
         new_cell.appendChild(text);
     } else {
+        row_ref.style.paddingTop = "10em";
+        var clone_icon = document.createElement('I');
+        clone_icon.className = 'far fa-clone fa-4x';
+        new_cell.appendChild(clone_icon);
         var div = document.createElement('div');
-        div.innerHTML = "Upload rksys.dat"
+        div.innerHTML = "Drop rksys.dat here"
         new_cell.appendChild(div);
         div = document.createElement('div');
         div.innerHTML = "OR"
@@ -123,7 +127,7 @@ function update_import_table(initial=false) {
     new_tbody.id = tbody.id;
     
     if (initial) {
-        new_tbody = initial_import_table(new_tbody, true);
+        new_tbody = initial_table(new_tbody, true);
     } else {
         // sort ghosts based on their track index
         GHOSTS_IMPORT.sort(function(a, b) {
@@ -147,7 +151,7 @@ function update_license_table(index, ghost_type, initial=false) {
 
     if (index == -1) {
         license_div.className = license_div.className.replace(class_regex, 'neutral-tabs');
-        new_tbody = initial_import_table(new_tbody, false);
+        new_tbody = initial_table(new_tbody, false);
     } else {
         license_div.className = license_div.className.replace(class_regex, `l${index+1}-tabs`);
         new_tbody.classList.add(`l${index+1}-t`);
@@ -160,6 +164,12 @@ function update_license_table(index, ghost_type, initial=false) {
             return 0;
         });
         new_tbody = ghosts_to_table(new_tbody, GHOSTS_LICENSE[index][ghost_type], false);
+        // if there is not enough downloaded ghosts slots left vs the to be imported ghosts
+        if (ghost_type == 'download' && GHOSTS_IMPORT.length > 32 - GHOSTS_LICENSE[index]['download'].length) {
+            document.getElementById('import-button').classList.add('warning');
+        } else {
+            document.getElementById('import-button').classList.remove('warning');
+        }
     }
 
     tbody.parentNode.replaceChild(new_tbody, tbody);
@@ -208,10 +218,10 @@ function get_ghost_summary(rkg, index, address) {
     var track_index = TRACK_IDS[track_id][1];
 
     // extract misc information
-    var controller = CONTROLLERS[rkg[0xB] & 0xF];
-    var drift = (rkg[0xD] >> 0x1) & 0x1 ? "Automatic" : "Manual"; 
-    var vehicle = VEHICLES[rkg[0x8] >> 0x2];
-    var character = CHARACTERS[(rkg[0x8] & 0x3) << 0x4 | (rkg[0x9]) >> 0x4];
+    var controller = rkg[0xB] & 0xF;
+    var drift = (rkg[0xD] >> 0x1) & 0x1; 
+    var vehicle = rkg[0x8] >> 0x2;
+    var character = (rkg[0x8] & 0x3) << 0x4 | (rkg[0x9]) >> 0x4;
 
     // extract the time
     var min = rkg[0x4] >> 0x1;
@@ -278,10 +288,10 @@ function read_rkg_files(files) {
     }
 }
 
-function read_rksys_file(file_name_obj, files) {
+function read_rksys_file(file_name_obj, files, blank_rksys=false) {
     const reader = new FileReader();
     var file_name;
-    if (typeof files == "FileList") {
+    if (!blank_rksys) {
         reader.readAsArrayBuffer(files[0]);
         file_name = files[0].name;
     } else {
@@ -290,7 +300,15 @@ function read_rksys_file(file_name_obj, files) {
     }
     reader.onload = function(){
         const arrayBuffer = this.result;
-        RKSYS = new Uint8Array(arrayBuffer);   
+        if (!blank_rksys) {
+            RKSYS = new Uint8Array(arrayBuffer);
+        } else {
+            // only the first 0x28000 bytes of the blank rksys.dat file are given, the rest is filled 
+            // in here since it's all just zeros from that point on
+            RKSYS = new Uint8Array(0x2BC000);
+            RKSYS.set(new Uint8Array(arrayBuffer));
+            RKSYS.set(0x28000, new Uint8Array(0x294000));
+        }
         if (String.fromCharCode.apply(null, RKSYS.slice(0, 4)) == "RKSD") {
             file_name_obj.classList.remove("no-file");
             file_name_obj.textContent = file_name;
@@ -415,7 +433,7 @@ function prepare_rkg_for_import(rkg, index) {
     // set the correct ghost type
     var ghost_type;
     if (index == null) { // pb ghost
-        rkg[0xD] = (rkg[0xD] & 0x03) | 0x04;
+        ghost_type = 0x4;
     } else { // downloaded ghost
         if (index < 30) {
             // set to downloaded friend ghost
@@ -477,6 +495,14 @@ async function save_and_download_save() {
                     for (var j = 0; j < 0x2800; j++) {
                         ghost_files[ghost_file_addr + j] = rkg[j];
                     }
+
+                    // adjust tt entry so the time shows up on track selection
+                    var entry_address = license_save_addr + 0xDB8 + 0x60 * track_nr;
+                    save_data[entry_address + 0x54] = ghost["rkg"][0x4];
+                    save_data[entry_address + 0x55] = ghost["rkg"][0x5];
+                    save_data[entry_address + 0x56] = ghost["rkg"][0x6];
+                    save_data[entry_address + 0x57] = ghost["vehicle"] << 0x2;
+                    save_data[entry_address + 0x58] = ghost["character"] | 0x80;
                 }
                 // adjust pb flag
                 var byte_nr = 3 - Math.floor(track_nr / 8);
