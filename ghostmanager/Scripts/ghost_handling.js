@@ -9,7 +9,7 @@ var RKSYS = []; // the entire rksys.dat file
 var GHOSTS_IMPORT = []; // all uploaded ghosts waiting to be imported
 var GHOSTS_LICENSE = [null, null, null, null]; // all ghosts for eacht of the 4 licenses
 var CURRENT_LICENSE = -1; // the index of the currently selected license
-var GHOSTS_TO_BE_DELETED = []; // the addresses of ghosts that should be deleted
+var GHOSTS_TO_BE_DELETED = [[], [], [], []]; // the addresses of ghosts that should be deleted
 var FREE_DOWNLOAD_SLOTS = [[], [], [], []]; // the addresses of the available download ghost slots for each license
 
 // FUNCTIONS
@@ -185,7 +185,7 @@ function delete_selected_ghosts(ghost_type) {
                     // since this slot is going to be freed up after deletion, add it to the free slots
                     FREE_DOWNLOAD_SLOTS[CURRENT_LICENSE].push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]['index']);
                 }
-                GHOSTS_TO_BE_DELETED.push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]);
+                GHOSTS_TO_BE_DELETED[CURRENT_LICENSE].push(GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type][j]);
             }
             GHOSTS_LICENSE[CURRENT_LICENSE][ghost_type].splice(j, 1);
         }

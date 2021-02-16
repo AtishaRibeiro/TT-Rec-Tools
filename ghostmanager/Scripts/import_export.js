@@ -82,7 +82,7 @@ function prepare_rkg_for_import(rkg, index) {
     rkg[0xD] = (rkg[0xD] & 0x03) | ghost_type;
 
     // extend so the ghost file is exactly 0x2800 bytes in length (including checksum)
-    var rkg_data = Array.from(rkg);
+    var rkg_data = Array.from(rkg).slice(0, 0x27fc);
     for(var i = rkg_data.length; i < 0x27fc; i++){
         rkg_data.push(0);
     }
@@ -113,7 +113,7 @@ async function save_and_download_save() {
             const dl_fl_addr = license_save_addr + 0x8; // download flags address
 
             // delete the ghosts that have to be deleted (GHOSTS_TO_BE_DELETED)
-            for (ghost of GHOSTS_TO_BE_DELETED) {
+            for (ghost of GHOSTS_TO_BE_DELETED[i]) {
                 for (var j = 0; j < 0x2800; j++) {
                     ghost_files[ghost['address'] - 0x28000 + j] = 0x00;
                     if (ghost['type'] == 'pb') { // clear the time entry data if pb
