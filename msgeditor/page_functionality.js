@@ -196,10 +196,18 @@ function autocomplete(inp, msg_arr, match_advanced=false) {
                 /*create a DIV element for each matching element:*/
                 b = document.createElement("DIV");
                 /*make the matching letters bold:*/
-                b.innerHTML = "<strong>" + arr_text.substr(0, val.length) + "</strong>";
-                b.innerHTML += arr_text.substr(val.length);
+                span1 = document.createElement("span");
+                span1.textContent = arr_text.substr(0, val.length);
+                span1.setAttribute("style", "font-weight: bold;");
+                span2 = document.createElement("span");
+                span2.textContent = arr_text.substr(val.length);
                 /*insert a input field that will hold the current array item's value:*/
-                b.innerHTML += "<input type='hidden' value='" + arr_text + "'>";
+                input = document.createElement("input");
+                input.type = "hidden";
+                input.value = arr_text;
+                b.appendChild(span1);
+                b.appendChild(span2);
+                b.appendChild(input);
                 /*execute a function when someone clicks on the item value (DIV element):*/
                 b.addEventListener("click", function(e) {
                     /*insert the value for the autocomplete text field:*/
@@ -236,11 +244,21 @@ function autocomplete(inp, msg_arr, match_advanced=false) {
                     /*create a DIV element for each matching element:*/
                     b = document.createElement("DIV");
                     /*make the matching letters bold:*/
-                    b.innerHTML = arr_text.substr(0, j);
-                    b.innerHTML += "<strong>" + arr_text.substr(j, val.length) + "</strong>";
-                    b.innerHTML += arr_text.substr(j + val.length);
+                    span1 = document.createElement("span");
+                    span1.textContent = arr_text.substr(0, j);
+                    span2 = document.createElement("span");
+                    span2.textContent = arr_text.substr(j, val.length);
+                    span2.setAttribute("style", "font-weight: bold;");
+                    span3 = document.createElement("span");
+                    span3.textContent = arr_text.substr(j + val.length);
                     /*insert a input field that will hold the current array item's value:*/
-                    b.innerHTML += "<input type='hidden' value='" + arr_text + "'>";
+                    input = document.createElement("input");
+                    input.type = "hidden";
+                    input.value = arr_text;
+                    b.appendChild(span1);
+                    b.appendChild(span2);
+                    b.appendChild(span3);
+                    b.appendChild(input);
                     /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function(e) {
                         /*insert the value for the autocomplete text field:*/
