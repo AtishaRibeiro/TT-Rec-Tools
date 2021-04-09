@@ -178,7 +178,7 @@ const COUNTRIES = [
     ["American Samoa", 150, "", "AS"],
     ["Guam", 151, "", "GU"],
     ["Indonesia", 152, "FB9C4BF7", "ID"],
-    ["Signapore", 153, "00EB49DA", "SG"],
+    ["Singapore", 153, "00EB49DA", "SG"],
     ["Thailand", 154, "09C7477A", "TH"],
     ["Philippines", 155, "0A625608", "PH"],
     ["Malaysia", 156, "02404851", "MY"],
