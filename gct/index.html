@@ -66,8 +66,8 @@
                 } else if (row.rowIndex < SELECTED_ROW) {
                     SELECTED_ROW -= 1;
                 }
-                table.removeChild(row);
                 CODES.splice(row.rowIndex, 1);
+                table.removeChild(row);
                 ROW_DELETE = true;
             }
 
