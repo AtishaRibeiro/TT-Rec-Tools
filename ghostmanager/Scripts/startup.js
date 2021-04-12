@@ -2,10 +2,39 @@
 // All things that need to happen on page load
 //
 
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/" + "; SameSite=Strict";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
 document.addEventListener("DOMContentLoaded", function() {
 
     update_import_table(true);
     update_license_table(-1, '', true);
+
+    // fetch iso cookie and set the right region
+    var iso_cookie = getCookie("rksys_region");
+    if (iso_cookie != "") {
+        document.getElementById("region-selector").value = iso_cookie;
+    }
 
     const tabSelector = document.querySelectorAll('.tabs li');
     tabSelector.forEach(function(tabObject) {
@@ -38,6 +67,12 @@ document.addEventListener("DOMContentLoaded", function() {
         if (RKSYS.length != 0) {
             await save_and_download_save();
         }
+    };
+
+    const region_selector = document.querySelector('#region-selector');
+    region_selector.onchange = () => {
+        var selected_value = region_selector.value;
+        setCookie("rksys_region", selected_value, 1000);
     };
 
     const miniButtons = document.querySelectorAll('.mini');

@@ -1,3 +1,23 @@
+var REGIONS = {
+    0x00 : "JP",
+    0x10 : "US",
+    0x20 : "EU",
+    0x30 : "AUS/NZ",
+    0x40 : "TW",
+    0x50 : "KR",
+    0x60 : "CN"
+};
+
+var REGION_VALUES = {
+    "JP" : 0x00,
+    "US" : 0x10,
+    "EU" : 0x20,
+    "AUS/NZ" : 0x30,
+    "TW" : 0x40,
+    "KR" : 0x50,
+    "CN" : 0x60
+};
+
 var TRACK_NAMES = {
     0: "LC", 1: "MMM", 2: "MG", 3: "TF",
     4: "MC", 5: "CM", 6: "DKSC", 7: "WGM",

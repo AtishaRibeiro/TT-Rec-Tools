@@ -101,6 +101,9 @@ async function save_and_download_save() {
     var save_data = RKSYS.slice(0, 0x27FFC);
     var free_download_slots = FREE_DOWNLOAD_SLOTS;
 
+    // set region
+    save_data[0x26B0A] = REGION_VALUES[document.getElementById("region-selector").value];
+
     for (var i = 0; i < 4; i++) {
         if (GHOSTS_LICENSE[i] != null) {
             var license_ghosts_addr = 0xA5000 * i;
@@ -145,6 +148,7 @@ async function save_and_download_save() {
                     save_data[entry_address + 0x56] = ghost["rkg"][0x6];
                     save_data[entry_address + 0x57] = ghost["vehicle"] << 0x2;
                     save_data[entry_address + 0x58] = ghost["character"] | 0x80;
+                    save_data[entry_address + 0x59] = (ghost["controller"] << 0x5) | (0x1F & save_data[entry_address + 0x59])
                 }
                 // adjust pb flag
                 var byte_nr = 3 - Math.floor(track_nr / 8);

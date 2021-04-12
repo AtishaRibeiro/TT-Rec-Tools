@@ -122,6 +122,19 @@ function read_rksys_file(file_name_obj, files, blank_rksys=false) {
             file_name_obj.classList.remove("no-file");
             file_name_obj.textContent = file_name;
 
+            // set the correct region for the save file
+            var region_selector = document.getElementById("region-selector");
+            if (blank_rksys) {
+                // for a blank file the region will be set to the preferred region (cookie)
+                var iso_cookie = getCookie("rksys_region");
+                if (iso_cookie != "") {
+                    region_selector.value = iso_cookie;
+                }
+            } else {
+                // if a save file is provided the region will be set based on the region of that save file
+                region_selector.value = REGIONS[RKSYS[0x26B0A]]
+            }
+
             var first_license = -1;
             for (var i = 0; i < 4; i++) { // check for valid licenses
                 var license_addr = 0x8 + i * 0x8cc0;

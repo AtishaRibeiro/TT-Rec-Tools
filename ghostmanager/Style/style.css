@@ -56,9 +56,22 @@ button, button > * {
     cursor: pointer;
 }
 
-#import-save-butt {
-    font-weight: bold;
+#save-butt-col {
+    padding-right:0;
 }
+
+#import-save-butt div {
+    margin-right:10px;
+}
+
+#region-selector-col {
+    padding-top:22px;
+}
+
+#region-selector-col div, #region-selector-col select {
+    height: 100%;
+}
+
 
 .tabs {
     margin-bottom: 0em !important;
