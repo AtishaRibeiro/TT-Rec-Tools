@@ -51,7 +51,7 @@ function create_file_download(file, filename) {
 
 function decompress_rkg(rkg) {
     var result = DecodeAll(rkg);
-    if (result.length = 0) { // if it was already decompressed
+    if (result.length == 0) { // if it was already decompressed
         rkg = rkg.slice(0, rkg.length - 4);
     } else {
         var ghost_header = rkg.slice(0, 0x88);
