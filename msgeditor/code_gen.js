@@ -21,21 +21,16 @@ function generate_single_code() {
     code = [ISO_CODES[ISO_REG], "XXXXXXXX",
     "7D6802A6", "YYYYYYYY"];
 
-    var hex_string = "";
     const [ret, error] = utf_16_hex(document.getElementById(`msg_input_0`).value);
     if (ret == null) return `Wrong format for ${error}`;
-    hex_string += ret;
-    data_length = Math.ceil(hex_string.length / 8);
-    for (var i = 0; i < data_length; i++) {
-        var string_index = i * 8;
-        var string_part = hex_string.slice(string_index, string_index + 8);
-        if (string_part.length != 8) string_part = (string_part + "0".repeat(8)).slice(0, 8);
-        code.push(string_part);
+    var hex_string = ret + "0000";
+    hex_string += "0".repeat(hex_string.length % 8)
+
+    for (var i = 0; i < hex_string.length; i += 8) {
+        code.push(hex_string.slice(i, i + 8));
     }
-    if (code[code.length - 1].slice(4) != "0000") {
-        code.push("00000000");
-        data_length += 1;
-    }
+
+    code[3] = "48" + pad((hex_string.length / 2) + 5, 6);
 
     var msg_id = get_msd_id(0);
     if (msg_id == null) return "No ID filled in!";
@@ -46,7 +41,6 @@ function generate_single_code() {
     if (code.length % 2 == 0) code.push("60000000");
     code.push("00000000");
     code[1] = pad(code.length / 2 - 1, 8);
-    code[3] = "48" + pad((data_length + 1) * 4 + 1, 6);
 
     return code;
 }
@@ -57,35 +51,23 @@ function generate_mul_code(rows) {
 
     // insert all the strings
     var string_lengths = [];
-    var data_length = 0;
-    var null_terminated = true;
+    var data = "";
     for (var i = 0; i < rows.length; i++) {
-        var hex_string = null_terminated ? "" : "0000";
-        null_terminated = false;
         const [ret, error] = utf_16_hex(document.getElementById(`msg_input_${i}`).value);
         if (ret == null) return `Wrong format for ${error}`;
-        hex_string += ret;
-        string_lengths.push(hex_string.length + 4);
-        var curr_data_length = Math.ceil(hex_string.length / 8);
-        data_length += curr_data_length;
-
-        for (var j = 0; j < curr_data_length; j++) {
-            var string_index = j * 8;
-            var string_part = hex_string.slice(string_index, string_index + 8);
-            if (string_part.length != 8) {
-                string_part = (string_part + "0".repeat(8)).slice(0, 8);
-                null_terminated = true;
-            }
-            code.push(string_part);
-        }
+        var hex_string = ret + "0000";
+        string_lengths.push(hex_string.length);
+        data += hex_string;
     }
 
-    if (code[code.length - 1].slice(4) != "0000") {
-        code.push("00000000");
-        data_length += 1;
+    // extend with zeros so the length becomes a multiple of 8
+    data += "0".repeat(data.length % 8)
+
+    for (var i = 0; i < data.length; i += 8) {
+        code.push(data.slice(i, i + 8));
     }
 
-    code[3] = "48" + pad((data_length + 1) * 4 + 1, 6);
+    code[3] = "48" + pad((data.length / 2) + 5, 6);
 
     // actual code after the strings
     code.push("7D8802A6");
