@@ -242,18 +242,13 @@ function parseURL(ghosturl) {
         newurl = ghosturl;
     }
 
-    //need cors proxy
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', newurl, true);
+    xhr.open('GET', `http://cors-anywhere.herokuapp.com/${newurl}`, true);
     xhr.responseType = 'arraybuffer';
     xhr.overrideMimeType(Blob);
     xhr.onreadystatechange = function () {
         if (this.readyState===4 && this.status===200) {
-            read_rkg_files(new Blob([this.response],true));
-        }
-        else {
-            console.log('error');
-            //tell user invalid
+            read_rkg_files([new File([this.response],true)]);
         }
     }
     xhr.send();
