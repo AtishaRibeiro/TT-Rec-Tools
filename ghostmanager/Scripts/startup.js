@@ -108,6 +108,22 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    const urlButton = document.getElementById('url-button');
+    urlButton.onclick = () => {
+        if (!DOWNLOADING_GHOSTS) {
+            const active_tab = document.querySelector('#license li.is-active');
+            parseURL(document.getElementById("url-input").value);
+        }
+    }
+
+    //also submits url with enter key
+    const urlInput = document.getElementById('url-input');
+    urlInput.addEventListener("keyup",function(event) {
+        if (event.keyCode===13) {
+            urlButton.click();
+        }
+    });
+
     // drag&drop functionality
 
     var rksysDropArea = document.getElementById('rksys');

@@ -229,3 +229,32 @@ function import_ghosts(ghost_type) {
     }
     update_chosen_license(CURRENT_LICENSE, ghost_type);
 }
+
+function parseURL(ghosturl) {
+    var newurl;
+    if (ghosturl.includes("maschell.de") || ghosturl.includes("ninrankings.org")) {
+        newurl = ghosturl.replace("ghostviewer","download");
+    }
+    else if (ghosturl.includes("chadsoft.co.uk")) {
+        newurl = ghosturl.replace(".html",".rkg");
+    }
+    else {
+        newurl = ghosturl;
+    }
+
+    //need cors proxy
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', newurl, true);
+    xhr.responseType = 'arraybuffer';
+    xhr.overrideMimeType(Blob);
+    xhr.onreadystatechange = function () {
+        if (this.readyState===4 && this.status===200) {
+            read_rkg_files(new Blob([this.response],true));
+        }
+        else {
+            console.log('error');
+            //tell user invalid
+        }
+    }
+    xhr.send();
+}
