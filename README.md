@@ -24,6 +24,7 @@ The following people helped in some way or another:
 	- Vega: globe positions, CRC bypass code, further code optimisation
 	- Anarion: globe position code
 	- Diamond: time highlighting code
+	- ForgottenIce: gathering the country flags
 - MSG Editor
 	- Wiimm: complete message database
 - RKG Compression/Decompression
