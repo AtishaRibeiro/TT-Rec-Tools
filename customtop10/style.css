@@ -54,3 +54,7 @@ li {
     width: 10em;
     max-width: 10em;
 }
+
+.flag {
+    max-width: 75%;
+}
