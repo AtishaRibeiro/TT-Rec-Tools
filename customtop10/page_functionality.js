@@ -215,7 +215,8 @@ function set_flag(index, country) {
     }
     // change the visibility after setting the source otherwise you'll see the belgian flag flash for a moment
     // doesn't matter still happens B-)
-    img.src = `https://www.countryflags.io/${country_code.toLowerCase()}/flat/32.png`;
+    //img.src = `https://www.countryflags.io/${country_code.toLowerCase()}/flat/32.png`;
+    img.src = `countryflagsIO/${country_code.toLowerCase()}.png`;
     img.style.visibility = visibility;
 } 
 
