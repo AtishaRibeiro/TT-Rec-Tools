@@ -82,7 +82,7 @@ function custom_title_code() {
         if (string_part.length != 8) string_part = (string_part + "0".repeat(8)).slice(0, 8);
         title_code.push(string_part);
     }
-    if (title_code.slice(-1).slice(4,8) != "0000") {
+    if (title_code.at(-1).slice(4,8) != "0000") {
         title_code.push("00000000");
         data_length += 1;
     }
