@@ -66,8 +66,8 @@ function globe_position_code() {
 }
 
 function custom_title_code() {
-    title_code = [ISO_CODES[ISO_REG][2], "XXXXXXXX",
-                    "7D6802A6", "YYYYYYYY"];
+    title_code = [ISO_CODES[ISO_REG][2], null,
+                    "7D6802A6", null];
 
     var hex_title = "";
     if (document.getElementById("track-include").checked) {
@@ -114,7 +114,7 @@ function highlight_code() {
 function top_10_code() {
     var total_entries = get_entry_count();
     if (total_entries == 0) return false;
-    var entries = "398000" + pad(total_entries, 2);
+    var entries = "3980000" + total_entries.toString(16).toUpperCase();
     var branch = "48" + pad(0x05 + total_entries * 0x38, 6);
     
     var top_10_code = [ISO_CODES[ISO_REG][3], null,
@@ -126,11 +126,10 @@ function top_10_code() {
                                                 
     for(var i = 0; i < total_entries; i++) {
         // get all data from the form
-        const index = i.toString();
-        var name = document.getElementById(`name_${index}`).value;
-        var time = document.getElementById(`time_${index}`).value;
-        var country = get_country_value(0, document.getElementById(`country_${index}`).value)[1];
-        var wheel = document.getElementById(`wheel_${index}`).checked;
+        var name = document.getElementById(`name_${i}`).value;
+        var time = document.getElementById(`time_${i}`).value;
+        var country = get_country_value(0, document.getElementById(`country_${i}`).value)[1];
+        var wheel = document.getElementById(`wheel_${i}`).checked;
 
         var result = extract_time_values(time);
         if (!result) return `entry ${i+ 1} has the wrong time format`
