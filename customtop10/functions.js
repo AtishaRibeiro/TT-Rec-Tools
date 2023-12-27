@@ -211,7 +211,9 @@ function replace_mii_name(mii_index, mii_name) {
     var mii = MII_DATA[mii_index];
     var hex_string = utf_16_hex(mii_name);
     // pad so it fills 10 characters
-    hex_string = hex_string + "0000".repeat(10).slice(0, 40);
+    while (hex_string.length < 40) {
+        hex_string += "0000";
+    }
 
     for (var i = 0; i < 10; i++) {
         var string_index = i*4;
