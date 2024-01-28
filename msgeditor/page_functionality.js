@@ -99,15 +99,15 @@ document.addEventListener("DOMContentLoaded", function() {
     add_butt.addEventListener('click', function() {
         var table = document.getElementById('msg_table');
         var new_row = table.rows[0].cloneNode(true);
-        new_row.cells[0].getElementsByTagName('input')[0].setAttribute('id', `id_input_${table.rows.length}`);
+        let table_rows_length = table.rows.length // Optimization. Btw avoid using "var" to declare variables.
+        new_row.cells[0].getElementsByTagName('input')[0].setAttribute('id', `id_input_${table_rows_length}`);
         new_row.cells[0].getElementsByTagName('input')[0].value = "";
-        new_row.cells[1].getElementsByTagName('input')[0].setAttribute('id', `msg_input_${table.rows.length}`);
+        new_row.cells[1].getElementsByTagName('input')[0].setAttribute('id', `msg_input_${table_rows_length}`);
         new_row.cells[1].getElementsByTagName('input')[0].value = "";
         table.appendChild(new_row);
 
-        // -1 because we already added the row
-        autocomplete(document.getElementById(`msg_input_${table.rows.length - 1}`), MSG_ID, true);
-        autocomplete(document.getElementById(`id_input_${table.rows.length - 1}`), MSG_ID, false);
+        autocomplete(document.getElementById(`msg_input_${table_rows_length}`), MSG_ID, true);
+        autocomplete(document.getElementById(`id_input_${table_rows_length}`), MSG_ID, false);
 
         //enable the remove button
         document.getElementById('remove_butt').enabled = true;
@@ -185,7 +185,7 @@ function autocomplete(inp, msg_arr, match_advanced=false) {
         a = document.createElement("DIV");
         a.setAttribute("id", e.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
-        a.setAttribute("style",`width:${e.parentNode.offsetWidth}px`);
+        a.setAttribute("style",`width:${e.parentNode.offsetWidth}px;position:relative;`); // Otherwise the div will end up way lower than the actual page. --FalB
         /*append the DIV element as a child of the autocomplete container:*/
         e.parentNode.appendChild(a);
         /*for each item in the array...*/
