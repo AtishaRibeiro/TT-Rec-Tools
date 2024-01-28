@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function() {
     add_butt.addEventListener('click', function() {
         var table = document.getElementById('msg_table');
         var new_row = table.rows[0].cloneNode(true);
-        let table_rows_length = table.rows.length // Optimization. Btw avoid using "var" to declare variables. -- FalB
+        let table_rows_length = table.rows.length // Optimization. Btw avoid using "var" to declare variables.
         new_row.cells[0].getElementsByTagName('input')[0].setAttribute('id', `id_input_${table_rows_length}`);
         new_row.cells[0].getElementsByTagName('input')[0].value = "";
         new_row.cells[1].getElementsByTagName('input')[0].setAttribute('id', `msg_input_${table_rows_length}`);
